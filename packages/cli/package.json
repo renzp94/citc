@@ -1,0 +1,40 @@
+{
+  "name": "@renzp/create-app",
+  "version": "0.0.5",
+  "description": "用于创建 React 项目的脚手架",
+  "keywords": [
+    "cli"
+  ],
+  "bin": {
+    "create-app": "bin/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/renzp94/citc.git"
+  },
+  "author": "renzp <1074720760@qq.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/renzp94/citc/issues"
+  },
+  "homepage": "https://github.com/renzp94/citc#readme",
+  "files": [
+    "bin",
+    "template"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "dev": "tsup --watch src",
+    "build": "tsup"
+  },
+  "devDependencies": {
+    "@types/prompts": "^2.0.14",
+    "execa": "^6.0.0",
+    "prompts": "^2.4.2"
+  },
+  "engines": {
+    "node": "^12.13.0 || ^14.0.0 || >= 16.0.0"
+  }
+}
