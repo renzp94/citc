@@ -1,12 +1,10 @@
 import path from 'path'
 import fs from 'fs'
-import { blue, gray, green, red, white } from 'kolorist'
+import { gray, red } from 'kolorist'
 import resolveCommonConfig from './configs/common'
 import WebpackChain from 'webpack-chain'
-import { stdout } from 'single-line-log'
 import dotenv from 'dotenv'
 import dotenvExpand from 'dotenv-expand'
-import ChildProcess from 'child_process'
 
 /**
  * 判断文件是否存在
@@ -99,47 +97,6 @@ export const loadConfigFile = async (configFilPath: string | undefined) => {
   return webpackChain
 }
 /**
- * 进度条
- * @param total 总量
- * @param showTime 是否展示时间
- * @returns 返回包含功能的对象
- */
-export const useProcess = (total = 100, showTime = true) => {
-  let timer
-  let count = 0
-  const barLen = total > 50 ? 50 : total
-  let time = 0
-  let timeBlock = showTime ? ` ${(time / 1000).toFixed(2)}s` : ''
-  const start = () => {
-    timer = setInterval(() => {
-      time += 100
-      if (count < barLen - barLen / 10) {
-        timeBlock = showTime ? ` ${(time / 1000).toFixed(2)}s` : ''
-        count += barLen / 100
-        stdout(`⌛ ${blue('█'.repeat(count))}${white('░'.repeat(barLen - count))}${timeBlock}`)
-      }
-    }, 100)
-  }
-  const error = () => {
-    if (timer) {
-      clearInterval(timer)
-      stdout(`🚨 ${red('█'.repeat(barLen))} Error${timeBlock}\n`)
-    }
-  }
-
-  const done = () => {
-    if (timer) {
-      clearInterval(timer)
-      stdout(`✨ ${green('█'.repeat(barLen))} Done${timeBlock}\n`)
-    }
-  }
-  return {
-    start,
-    error,
-    done,
-  }
-}
-/**
  * 加载环境变量文件
  * @param {string} mode 开发模式
  */
@@ -180,28 +137,4 @@ export const resolveClientEnv = () => {
   return {
     'process.env': env,
   }
-}
-/**
- * 获取仓库当前所在分支名
- * @param cwd 目录
- * @returns 返回仓库当前所在分支名
- */
-export const getBranchName = (cwd: string): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    ChildProcess.exec('git branch', { cwd }, (err, stdout) =>
-      err ? reject(err) : resolve(stdout.replace('*', '').replace('\n', '').replace('\n\r', ''))
-    )
-  })
-}
-/**
- * 获取仓库当前分支最后一次提交的Commit Hash后8位
- * @param cwd 目录
- * @returns 返回Commit Hash后8位
- */
-export const getLastCommitHash8 = (cwd: string): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    ChildProcess.exec('git log -1 --format=%H', { cwd }, (err, stdout) =>
-      err ? reject(err) : resolve(stdout.replace(/\s+$/, '').slice(-8))
-    )
-  })
 }
