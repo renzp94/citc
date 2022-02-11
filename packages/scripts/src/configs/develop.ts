@@ -11,6 +11,10 @@ export default async (webpackChain: WebpackChain) => {
       warnings: false,
     },
   })
+  webpackChain.stats('errors-only').set('infrastructureLogging', {
+    ...(webpackChain.get('infrastructureLogging') ?? {}),
+    level: 'none',
+  })
   let port = webpackChain?.devServer?.get('port') ?? 8080
   port = await portfinder.getPortPromise({ port })
   webpackChain?.devServer?.port?.(port)

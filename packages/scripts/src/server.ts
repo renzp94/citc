@@ -11,9 +11,6 @@ export default async (configFile: string | undefined) => {
   // 合并开发环境配置
   await resolveDevConfig(webpackChain)
   const configs: Configuration = webpackChain.toConfig()
-  configs.infrastructureLogging = { ...configs.infrastructureLogging, level: 'none' }
-  configs.stats = 'errors-only'
-
   const compiler = Webpack(configs)
   compiler.hooks.failed.tap('citc-scripts start', (msg) => {
     console.log(red(msg.toString()))
