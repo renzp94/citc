@@ -14,14 +14,14 @@ export default async (webpackChain: WebpackChain) => {
   let port = webpackChain?.devServer?.get('port') ?? 8080
   port = await portfinder.getPortPromise({ port })
   webpackChain?.devServer?.port?.(port)
-  const local = address.ip('lo')
+  const local = address.ip('lo') ?? 'localhost'
   const network = address.ip()
   webpackChain.plugin('friendly-errors').use(FriendlyErrorsWebpackPlugin, [
     {
       compilationSuccessInfo: {
         messages: [
           'App run at: ',
-          `- Local:  ${cyan(`http://${local}:${port}`)}`,
+          `- Local:    ${cyan(`http://${local}:${port}`)}`,
           `- Network:  ${cyan(`http://${network}:${port}`)}`,
         ],
         notes: [
