@@ -35,6 +35,9 @@ export default (webpackChain: WebpackChain, typescript: boolean, fileType = 'js'
     .test(new RegExp(`\\.(${fileType}|${fileType}x)$`, 'i'))
     .exclude.add(/node_modules/)
     .end()
+    .use('thread-loader')
+    .loader(requireResolve('thread-loader'))
+    .end()
     .use('babel')
     .loader(requireResolve('babel-loader'))
     .options({
