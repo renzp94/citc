@@ -4,7 +4,7 @@ import path from 'path'
 import webpack from 'webpack'
 import EslintWebpackPlugin from 'eslint-webpack-plugin'
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
-import Webpackbar from 'webpackbar'
+import ProgressPlugin from 'progress-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import WindiCSSWebpackPlugin from 'windicss-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
@@ -39,9 +39,7 @@ export default (webpackChain: WebpackChain, opts: Options) => {
     webpackChain.plugin('windiCss').use(WindiCSSWebpackPlugin)
   }
 
-  webpackChain
-    .plugin('webpackbar')
-    .use(Webpackbar, [{ name: process.env.NODE_ENV === 'production' ? 'Build' : 'Development' }])
+  webpackChain.plugin('progress-webpack-plugin').use(ProgressPlugin)
 
   const cwd = process.cwd()
 

@@ -1,6 +1,6 @@
 {
   "name": "@renzp/scripts",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "基于Webpack5的打包脚本",
   "keywords": [
     "webpack",
@@ -61,6 +61,7 @@
     "postcss": "^8.4.6",
     "postcss-loader": "^6.2.1",
     "postcss-preset-env": "^7.3.1",
+    "progress-webpack-plugin": "^1.0.12",
     "speed-measure-webpack-plugin": "^1.5.0",
     "style-loader": "^3.3.1",
     "terser-webpack-plugin": "^5.3.1",
@@ -69,7 +70,6 @@
     "webpack-chain": "^6.5.1",
     "webpack-dev-server": "^4.7.4",
     "webpack-merge": "^5.8.0",
-    "webpackbar": "^5.0.2",
     "windicss-webpack-plugin": "^1.6.4"
   }
 }
