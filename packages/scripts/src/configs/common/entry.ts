@@ -1,4 +1,5 @@
 import { red } from 'kolorist'
+import fs from 'fs'
 import type WebpackChain from 'webpack-chain'
 import type { OptionEntry, Options } from '../../types'
 import { pathResolve } from '../../utils'
@@ -6,6 +7,19 @@ import { pathResolve } from '../../utils'
 export default (webpackChain: WebpackChain, fileType = 'js', opts: Options) => {
   const { entry, output = 'dist' } = opts
   webpackChain
+    .cache({
+      type: 'filesystem',
+      cacheDirectory: pathResolve(process.cwd(), 'node_modules/.cache'),
+      store: 'pack',
+      buildDependencies: {
+        defaultWebpack: ['webpack/lib/'],
+        config: [__filename],
+        tsconfig: [
+          pathResolve(process.cwd(), 'tsconfig.json'),
+          pathResolve(process.cwd(), 'jsconfig.json'),
+        ].filter((f) => fs.existsSync(f)),
+      },
+    })
     // 配置环境
     .mode(process.env.NODE_ENV as 'development' | 'production')
 

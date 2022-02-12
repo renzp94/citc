@@ -5,7 +5,7 @@ import { cyan } from 'kolorist'
 import portfinder from 'portfinder'
 
 export default async (webpackChain: WebpackChain) => {
-  webpackChain.devtool('inline-source-map').devServer.set('client', {
+  webpackChain.devtool('cheap-module-source-map').devServer.set('client', {
     overlay: {
       errors: true,
       warnings: false,

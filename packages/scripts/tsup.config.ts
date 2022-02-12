@@ -6,5 +6,4 @@ export default defineConfig({
   //   入口文件
   entry: ['src/index.ts'],
   outDir: 'bin',
-  dts: 'src/types.ts',
 })
