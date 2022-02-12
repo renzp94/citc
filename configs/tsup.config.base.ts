@@ -8,4 +8,7 @@ export default defineConfig({
   //   打包前清空
   clean: true,
   sourcemap: true,
+  dts: {
+    entry: { index: 'src/types.ts' },
+  },
 })
