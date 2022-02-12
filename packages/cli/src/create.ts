@@ -42,14 +42,16 @@ export const createProject = async (result: PromptsResult) => {
     copyTemplateFile('images.d.ts', '@types', '@types')
     cssModule && copyTemplateFile('css-module.d.ts', '@types', '@types')
   }
-  console.log(gray('初始化git仓库'))
-  await run('git init')
-  renderGitignore()
   if (eslint || stylelint) {
     renderHuskyAndLintstagedrc(typescript, eslint, stylelint)
     console.log(gray('初始化husky'))
     run('npx husky install')
   }
+  console.log(gray('初始化git仓库'))
+  await run('git init')
+  renderGitignore()
+  await run('git add .')
+  await run('git commit -m init')
 
   console.log(
     green(
