@@ -1,16 +1,26 @@
 import type WebpackChain from 'webpack-chain'
+import type { JtsLoader } from '../../../types'
 import { getJtsFileType, requireResolve } from '../../../utils'
 import path from 'path'
+import _merge from 'lodash/merge'
 
-export default (webpackChain: WebpackChain, typescript: boolean) => {
+export default (webpackChain: WebpackChain, typescript: boolean, { babel }: JtsLoader) => {
   const fileType = getJtsFileType(typescript)
 
+  const userLoaderOptions = babel?.loaderOptions ?? {}
+  const userPresetEnvOptions = babel?.presetEnv ?? {}
   const presets = [
-    requireResolve('@babel/preset-env', {
-      targets: 'es2015',
-      useBuiltIns: 'usage',
-      corejs: 3,
-    }),
+    requireResolve(
+      '@babel/preset-env',
+      _merge(
+        {
+          targets: 'es2015',
+          useBuiltIns: 'usage',
+          corejs: 3,
+        },
+        userPresetEnvOptions
+      )
+    ),
     requireResolve('@babel/preset-react'),
   ]
   if (typescript) {
@@ -20,16 +30,20 @@ export default (webpackChain: WebpackChain, typescript: boolean) => {
   const absoluteRuntime = path.dirname(requireResolve('@babel/runtime/package.json'))
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const version = require('@babel/runtime/package.json').version
+  const transformRuntimeOptions = babel?.transformRuntime ?? {}
   const transformRuntime = [
     requireResolve('@babel/plugin-transform-runtime'),
-    {
-      corejs: false,
-      helpers: true,
-      regenerator: true,
-      useESModules: true,
-      absoluteRuntime,
-      version,
-    },
+    _merge(
+      {
+        corejs: false,
+        helpers: true,
+        regenerator: true,
+        useESModules: true,
+        absoluteRuntime,
+        version,
+      },
+      transformRuntimeOptions
+    ),
   ]
 
   // 配置babel
@@ -43,15 +57,20 @@ export default (webpackChain: WebpackChain, typescript: boolean) => {
     .end()
     .use('babel')
     .loader(requireResolve('babel-loader'))
-    .options({
-      cacheDirectory: true,
-      presets,
-      plugins: [
-        transformRuntime,
-        requireResolve('@babel/plugin-proposal-class-properties'),
-        requireResolve('@babel/plugin-proposal-object-rest-spread'),
-        requireResolve('@babel/plugin-syntax-dynamic-import'),
-        requireResolve('babel-plugin-transform-react-remove-prop-types'),
-      ],
-    })
+    .options(
+      _merge(
+        {
+          cacheDirectory: true,
+          presets,
+          plugins: [
+            transformRuntime,
+            requireResolve('@babel/plugin-proposal-class-properties'),
+            requireResolve('@babel/plugin-proposal-object-rest-spread'),
+            requireResolve('@babel/plugin-syntax-dynamic-import'),
+            requireResolve('babel-plugin-transform-react-remove-prop-types'),
+          ],
+        },
+        userLoaderOptions
+      )
+    )
 }

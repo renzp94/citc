@@ -9,7 +9,7 @@ import resolveAssets from './assets'
 import resolveMinimizer from './minimizer'
 
 export default (opts?: Options) => {
-  const { typescript, cssModule, jtsLoader = 'babel' } = opts ?? {}
+  const { typescript, cssModule, jtsLoader } = opts ?? {}
   const webpackChain = new WebpackChain()
   resolveEntry(webpackChain, opts)
   resolveResolve(webpackChain, typescript)

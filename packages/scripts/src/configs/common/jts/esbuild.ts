@@ -1,8 +1,11 @@
 import type WebpackChain from 'webpack-chain'
+import type { JtsLoader } from '../../../types'
 import { getJtsFileType, requireResolve } from '../../../utils'
+import _merge from 'lodash/merge'
 
-export default (webpackChain: WebpackChain, typescript: boolean) => {
+export default (webpackChain: WebpackChain, typescript: boolean, { esbuild }: JtsLoader) => {
   const fileType = getJtsFileType(typescript)
+  const userOptions = esbuild?.loaderOptions ?? {}
 
   // 配置esbuild-loader
   webpackChain.module
@@ -12,8 +15,13 @@ export default (webpackChain: WebpackChain, typescript: boolean) => {
     .end()
     .use('esbuild')
     .loader(requireResolve('esbuild-loader'))
-    .options({
-      loader: `${fileType}x`,
-      target: 'es2015',
-    })
+    .options(
+      _merge(
+        {
+          loader: `${fileType}x`,
+          target: 'es2015',
+        },
+        userOptions
+      )
+    )
 }

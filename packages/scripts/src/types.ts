@@ -1,4 +1,28 @@
-export type JtsLoader = 'babel' | 'esbuild' | 'swc'
+export type JtsLoaderName = 'babel' | 'esbuild' | 'swc'
+
+export interface AnyObject {
+  [key: string]: unknown
+}
+
+export interface BabelOptions {
+  loaderOptions?: AnyObject
+  presetEnv?: AnyObject
+  transformRuntime?: AnyObject
+  minimizerOption?: AnyObject
+}
+
+export interface EsbuildOptions {
+  loaderOptions?: AnyObject
+  minimizerOption?: AnyObject
+}
+
+export interface JtsLoader {
+  loader: JtsLoaderName
+  babel: BabelOptions
+  esbuild: EsbuildOptions
+  swc: AnyObject
+}
+
 export interface Options {
   entry: string | Array<string> | OptionEntry
   output?: string
@@ -12,7 +36,7 @@ export interface Options {
   jtsLoader: JtsLoader
 }
 
-export interface JtsLoaderOptions {
+export interface ResolveJtsLoaderOptions {
   typescript?: boolean
   fileType?: string
   jtsLoader: JtsLoader

@@ -1,15 +1,18 @@
 import type WebpackChain from 'webpack-chain'
 import type { Optimization } from 'webpack-chain'
+import type { AnyObject, JtsLoader } from '../../types'
 import CssMinimizerWebpackPlugin from 'css-minimizer-webpack-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
 import { ESBuildMinifyPlugin } from 'esbuild-loader'
 import { yellow } from 'kolorist'
+import _merge from 'lodash/merge'
 
 /**
  * babel压缩
  */
-const babelMinimizer = (minimizer: Optimization) => {
-  minimizer.minimizer('js-minimizer').use(TerserPlugin, [
+const babelMinimizer = (minimizer: Optimization, options: AnyObject) => {
+  let opts: AnyObject = options ?? {}
+  opts = _merge(
     {
       terserOptions: {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -48,19 +51,23 @@ const babelMinimizer = (minimizer: Optimization) => {
         },
       },
     },
-  ])
+    opts
+  )
+  minimizer.minimizer('js-minimizer').use(TerserPlugin, [opts])
 }
 /**
  * esbuild压缩
  */
-const esbuildMinimizer = (minimizer: Optimization) => {
-  minimizer
-    .minimizer('js-esbuild-minimizer')
-    .use(ESBuildMinifyPlugin, [{ target: 'es2015', css: true, legalComments: 'none' }])
+const esbuildMinimizer = (minimizer: Optimization, options: AnyObject) => {
+  let opts = options ?? {}
+  opts = _merge({ target: 'es2015', css: true, legalComments: 'none' }, opts)
+  minimizer.minimizer('js-esbuild-minimizer').use(ESBuildMinifyPlugin, [opts])
 }
 
-export default (webpackChain: WebpackChain, jtsLoader: string) => {
-  // 抽离公共部分
+export default (webpackChain: WebpackChain, jtsLoader: JtsLoader) => {
+  const { loader, babel } = jtsLoader ?? {}
+
+  // css压缩
   const minimizer = webpackChain.optimization
     .minimize(true)
     .minimizer('css-minimizer')
@@ -72,11 +79,14 @@ export default (webpackChain: WebpackChain, jtsLoader: string) => {
     esbuild: esbuildMinimizer,
     swc: esbuildMinimizer,
   }
-  console.log(
-    yellow(
-      '[WARNING]: swc的压缩功能还在建设中，所以当jtsLoader=swc时默认使用esbuild压缩，swc压缩会在适当时机添加'
-    )
-  )
 
-  minimizers[jtsLoader](minimizer)
+  if (loader === 'swc') {
+    console.log(
+      yellow(
+        '[WARNING]: swc的压缩功能还在建设中，所以当jtsLoader=swc时默认使用esbuild压缩，swc压缩会在适当时机添加'
+      )
+    )
+  }
+
+  minimizers[loader](minimizer, babel?.minimizerOption)
 }
