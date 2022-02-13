@@ -8,7 +8,7 @@ import { loadEnv } from './utils'
 
 const run = async () => {
   try {
-    console.log(`\n${lightBlue(inverse(` 🎉 🅲 🅸 🆃 🅲 🏆 Scripts v${pkg.version} \n`))}`)
+    console.log(`\n${lightBlue(inverse(` 4🎉 🅲 🅸 🆃 🅲 🏆 Scripts v${pkg.version} \n`))}`)
     const argv = minimist(process.argv.slice(2))
     const [runCommand] = argv._
     const commandMethod = {

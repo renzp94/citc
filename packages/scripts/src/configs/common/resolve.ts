@@ -1,7 +1,9 @@
 import type WebpackChain from 'webpack-chain'
-import { pathResolve } from '../../utils'
+import { getJtsFileType, pathResolve } from '../../utils'
 
-export default (webpackChain: WebpackChain, fileType = 'js') => {
+export default (webpackChain: WebpackChain, typescript: boolean) => {
+  const fileType = getJtsFileType(typescript)
+
   webpackChain.resolve.extensions
     .add('.jsx')
     .add('.js')

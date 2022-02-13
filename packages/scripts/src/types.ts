@@ -1,3 +1,4 @@
+export type JtsLoader = 'babel' | 'esbuild' | 'swc'
 export interface Options {
   entry: string | Array<string> | OptionEntry
   output?: string
@@ -8,6 +9,13 @@ export interface Options {
   windiCss?: boolean
   cssModule?: boolean
   webpackBuildInfo?: boolean
+  jtsLoader: JtsLoader
+}
+
+export interface JtsLoaderOptions {
+  typescript?: boolean
+  fileType?: string
+  jtsLoader: JtsLoader
 }
 
 export interface OptionEntry {

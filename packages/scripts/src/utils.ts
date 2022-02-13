@@ -138,3 +138,9 @@ export const resolveClientEnv = () => {
     'process.env': env,
   }
 }
+/**
+ * 获取文件的类型
+ * @param typescript 是否为ts
+ * @returns js | ts
+ */
+export const getJtsFileType = (typescript: boolean) => (typescript ? 'ts' : 'js')

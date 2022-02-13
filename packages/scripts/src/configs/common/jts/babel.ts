@@ -1,10 +1,13 @@
 import type WebpackChain from 'webpack-chain'
-import { requireResolve } from '../../utils'
+import { getJtsFileType, requireResolve } from '../../../utils'
 import path from 'path'
 
-export default (webpackChain: WebpackChain, typescript: boolean, fileType = 'js') => {
+export default (webpackChain: WebpackChain, typescript: boolean) => {
+  const fileType = getJtsFileType(typescript)
+
   const presets = [
     requireResolve('@babel/preset-env', {
+      targets: 'es2015',
       useBuiltIns: 'usage',
       corejs: 3,
     }),

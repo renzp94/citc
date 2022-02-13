@@ -3,19 +3,22 @@ import WebpackChain from 'webpack-chain'
 import resolveEntry from './entry'
 import resolveResolve from './resolve'
 import resolvePlugins from './plugins'
-import resolveBabel from './babel'
+import resolveJts from './jts'
 import resolveCss from './css'
 import resolveAssets from './assets'
+import resolveMinimizer from './minimizer'
 
 export default (opts?: Options) => {
-  const { typescript, cssModule } = opts ?? {}
-  const fileType = typescript ? 'ts' : 'js'
+  const { typescript, cssModule, jtsLoader = 'babel' } = opts ?? {}
   const webpackChain = new WebpackChain()
-  resolveEntry(webpackChain, fileType, opts)
-  resolveResolve(webpackChain, fileType)
-  resolveBabel(webpackChain, typescript, fileType)
+  resolveEntry(webpackChain, opts)
+  resolveResolve(webpackChain, typescript)
+  resolveJts(webpackChain, { typescript, jtsLoader })
   resolveCss(webpackChain, cssModule)
   resolveAssets(webpackChain)
   resolvePlugins(webpackChain, opts)
+  if (process.env.NODE_ENV === 'production') {
+    resolveMinimizer(webpackChain, jtsLoader)
+  }
   return webpackChain
 }

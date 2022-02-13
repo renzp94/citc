@@ -2,10 +2,12 @@ import { red } from 'kolorist'
 import fs from 'fs'
 import type WebpackChain from 'webpack-chain'
 import type { OptionEntry, Options } from '../../types'
-import { pathResolve } from '../../utils'
+import { getJtsFileType, pathResolve } from '../../utils'
 
-export default (webpackChain: WebpackChain, fileType = 'js', opts: Options) => {
-  const { entry, output = 'dist' } = opts
+export default (webpackChain: WebpackChain, opts: Options) => {
+  const { entry, output = 'dist', typescript } = opts
+  const fileType = getJtsFileType(typescript)
+
   webpackChain
     .cache({
       type: 'filesystem',
