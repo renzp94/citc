@@ -10,8 +10,8 @@ import _merge from 'lodash/merge'
 /**
  * babel压缩
  */
-const babelMinimizer = (minimizer: Optimization, options: AnyObject) => {
-  let opts: AnyObject = options ?? {}
+const babelMinimizer = (minimizer: Optimization, options: JtsLoader) => {
+  let opts: AnyObject = options?.babel?.minimizerOption ?? {}
   opts = _merge(
     {
       terserOptions: {
@@ -58,14 +58,14 @@ const babelMinimizer = (minimizer: Optimization, options: AnyObject) => {
 /**
  * esbuild压缩
  */
-const esbuildMinimizer = (minimizer: Optimization, options: AnyObject) => {
-  let opts = options ?? {}
+const esbuildMinimizer = (minimizer: Optimization, options: JtsLoader) => {
+  let opts = options?.esbuild?.minimizerOption ?? {}
   opts = _merge({ target: 'es2015', css: true, legalComments: 'none' }, opts)
   minimizer.minimizer('js-esbuild-minimizer').use(ESBuildMinifyPlugin, [opts])
 }
 
 export default (webpackChain: WebpackChain, jtsLoader: JtsLoader) => {
-  const { loader, babel } = jtsLoader ?? {}
+  const { loader = 'babel' } = jtsLoader ?? {}
 
   // css压缩
   const minimizer = webpackChain.optimization
@@ -88,5 +88,5 @@ export default (webpackChain: WebpackChain, jtsLoader: JtsLoader) => {
     )
   }
 
-  minimizers[loader](minimizer, babel?.minimizerOption)
+  minimizers[loader](minimizer, jtsLoader)
 }

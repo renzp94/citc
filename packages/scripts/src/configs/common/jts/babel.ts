@@ -4,11 +4,11 @@ import { getJtsFileType, requireResolve } from '../../../utils'
 import path from 'path'
 import _merge from 'lodash/merge'
 
-export default (webpackChain: WebpackChain, typescript: boolean, { babel }: JtsLoader) => {
+export default (webpackChain: WebpackChain, typescript: boolean, jtsLoader: JtsLoader) => {
   const fileType = getJtsFileType(typescript)
 
-  const userLoaderOptions = babel?.loaderOptions ?? {}
-  const userPresetEnvOptions = babel?.presetEnv ?? {}
+  const userLoaderOptions = jtsLoader?.babel?.loaderOptions ?? {}
+  const userPresetEnvOptions = jtsLoader?.babel?.presetEnv ?? {}
   const presets = [
     requireResolve(
       '@babel/preset-env',
@@ -30,7 +30,7 @@ export default (webpackChain: WebpackChain, typescript: boolean, { babel }: JtsL
   const absoluteRuntime = path.dirname(requireResolve('@babel/runtime/package.json'))
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const version = require('@babel/runtime/package.json').version
-  const transformRuntimeOptions = babel?.transformRuntime ?? {}
+  const transformRuntimeOptions = jtsLoader?.babel?.transformRuntime ?? {}
   const transformRuntime = [
     requireResolve('@babel/plugin-transform-runtime'),
     _merge(

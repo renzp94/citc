@@ -3,9 +3,9 @@ import type { JtsLoader } from '../../../types'
 import { getJtsFileType, requireResolve } from '../../../utils'
 import _merge from 'lodash/merge'
 
-export default (webpackChain: WebpackChain, typescript: boolean, { esbuild }: JtsLoader) => {
+export default (webpackChain: WebpackChain, typescript: boolean, jtsLoader: JtsLoader) => {
   const fileType = getJtsFileType(typescript)
-  const userOptions = esbuild?.loaderOptions ?? {}
+  const userOptions = jtsLoader?.esbuild?.loaderOptions ?? {}
 
   // 配置esbuild-loader
   webpackChain.module

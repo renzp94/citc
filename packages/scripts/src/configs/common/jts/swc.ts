@@ -3,11 +3,9 @@ import type { JtsLoader } from '../../../types'
 import { getJtsFileType, requireResolve } from '../../../utils'
 import _merge from 'lodash/merge'
 
-export default (webpackChain: WebpackChain, typescript: boolean, { swc }: JtsLoader) => {
+export default (webpackChain: WebpackChain, typescript: boolean, jtsLoader: JtsLoader) => {
   const fileType = getJtsFileType(typescript)
   const syntax = typescript ? 'typescript' : 'ecmascript'
-
-  const options = swc ?? {}
 
   // 配置swc-loader
   webpackChain.module
@@ -38,7 +36,7 @@ export default (webpackChain: WebpackChain, typescript: boolean, { swc }: JtsLoa
             },
           },
         },
-        options
+        jtsLoader?.swc ?? {}
       )
     )
 }
