@@ -78,7 +78,7 @@ importers:
       '@babel/preset-react': ^7.16.7
       '@babel/preset-typescript': ^7.16.7
       '@babel/runtime': ^7.17.2
-      '@renzp/build-info-webpack-plugin': 0.0.5
+      '@renzp/build-info-webpack-plugin': ^0.0.6
       '@soda/friendly-errors-webpack-plugin': ^1.8.1
       '@swc/core': ^1.2.139
       '@types/webpack': ^5.28.0
@@ -123,7 +123,7 @@ importers:
       '@babel/preset-react': 7.16.7_@babel+core@7.17.2
       '@babel/preset-typescript': 7.16.7_@babel+core@7.17.2
       '@babel/runtime': 7.17.2
-      '@renzp/build-info-webpack-plugin': 0.0.5_webpack@5.68.0
+      '@renzp/build-info-webpack-plugin': 0.0.6_webpack@5.68.0
       '@soda/friendly-errors-webpack-plugin': 1.8.1_webpack@5.68.0
       '@swc/core': 1.2.139
       address: 1.1.2
@@ -1535,8 +1535,8 @@ packages:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
     dev: false
 
-  /@renzp/build-info-webpack-plugin/0.0.5_webpack@5.68.0:
-    resolution: {integrity: sha512-vbhR2I/ndZWRkomHGQzTdjmLdvR3y5nsKS9eatzmmGXq7fv5aImKiM6F2CC89Pg0S9okx6KbTQd2EtwCfCPHrg==}
+  /@renzp/build-info-webpack-plugin/0.0.6_webpack@5.68.0:
+    resolution: {integrity: sha512-04zl36CpwcTz+el+ovObJbDPckH/EzsG14AMzY65rUIAx6aF144auZqLos1Gx+vlhiJzQRVNXapq7A7KTxGUrA==}
     dependencies:
       html-webpack-plugin: 5.5.0_webpack@5.68.0
     transitivePeerDependencies:
