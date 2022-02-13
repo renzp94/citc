@@ -20,6 +20,7 @@ const getCommandValues = (): CommandValues => {
   const isStylelintFlagUsed = typeof argv.stylelint === 'boolean'
   // 是否使用Css Module
   const isCssModuleFlagUsed = typeof argv.cssModule === 'boolean'
+  const jtsLoader = argv.jtsLoader
 
   return {
     argv,
@@ -31,6 +32,7 @@ const getCommandValues = (): CommandValues => {
     isEslintFlagUsed,
     isStylelintFlagUsed,
     isCssModuleFlagUsed,
+    jtsLoader,
   }
 }
 

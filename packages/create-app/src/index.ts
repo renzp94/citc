@@ -7,7 +7,7 @@ import pkg from '../package.json'
 
 const init = async () => {
   try {
-    console.log(`\n${lightBlue(inverse(` 🎉 🅲 🅸 🆃 🅲 🏆  Cli v${pkg.version} \n`))}\n`)
+    console.log(`\n${lightBlue(inverse(` 🎉 🅲 🅸 🆃 🅲 🏆  Create App v${pkg.version} \n`))}\n`)
     const values = getCommandValues()
     const result = await getPrompts(values)
     createProject(result)

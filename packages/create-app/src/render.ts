@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import type { JtsLoader } from '../../scripts/src/types'
 import { PromptsResult } from './types'
 import { appendFileContent, deepMerge, sortDependencies } from './utils'
 
@@ -9,7 +10,14 @@ const templateRoot = path.resolve(__dirname, '../template')
  * 在目标目录下生成package.json文件
  * @param {string} projectName 项目名
  */
-export const renderPackage = ({ packageName, eslint, stylelint, typescript }: PromptsResult) => {
+export const renderPackage = ({
+  packageName,
+  eslint,
+  stylelint,
+  typescript,
+  jtsLoader,
+}: PromptsResult) => {
+  console.log(jtsLoader)
   const isLint = eslint || stylelint
   const tsPackage = {
     '@typescript-eslint/eslint-plugin': '^5.8.0',
@@ -35,6 +43,9 @@ export const renderPackage = ({ packageName, eslint, stylelint, typescript }: Pr
     'stylelint-config-standard': '^24.0.0',
     'stylelint-order': '^5.0.0',
   }
+  const swcPackage = {
+    '@swc/helpers': '^0.3.3',
+  }
 
   const pkg = {
     name: packageName,
@@ -44,6 +55,7 @@ export const renderPackage = ({ packageName, eslint, stylelint, typescript }: Pr
       build: 'citc-scripts build',
     },
     devDependencies: {
+      ...(jtsLoader === 'swc' ? swcPackage : {}),
       ...(eslint ? eslintPackage : {}),
       ...(isLint ? huskyPackage : {}),
       ...(stylelint ? stylelintPackage : {}),
@@ -180,14 +192,25 @@ export const renderTemplate = (
  * @param {boolean} eslint 是否使用eslint
  * @param {boolean} stylelint 是否使用stylelint
  */
-export const renderCitcConfig = (typescript = false, windiCss = false, cssModule = false) => {
+export const renderCitcConfig = (
+  typescript = false,
+  windiCss = false,
+  cssModule = false,
+  jtsLoader: JtsLoader
+) => {
   const fileType = typescript ? 'ts' : 'js'
+  let jtsConfig = ''
+  if (jtsLoader) {
+    jtsConfig = `  jtsLoader: {\n    loader: '${jtsLoader}',\n  },\n`
+  }
+
   fs.writeFileSync(
     path.resolve(process.env.ROOT, 'citc.config.js'),
     'module.exports = {\n' +
       `  typescript: ${typescript},\n` +
       `  windiCss: ${windiCss},\n` +
       `  cssModule: ${cssModule},\n` +
+      jtsConfig +
       '}\n'
   )
 

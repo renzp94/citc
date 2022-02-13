@@ -1,8 +1,9 @@
 import type { CommandValues, PromptsResult } from './types'
 import prompts from 'prompts'
-import { red, yellow } from 'kolorist'
+import { red, yellow, blue } from 'kolorist'
 import { canSafelyOverwrite, isValidPackageName, toValidPackageName } from './utils'
 import path from 'path'
+import { cyan } from 'kolorist'
 
 const getPrompts = async ({
   defaultProjectName,
@@ -13,6 +14,7 @@ const getPrompts = async ({
   isEslintFlagUsed,
   isStylelintFlagUsed,
   isCssModuleFlagUsed,
+  jtsLoader,
 }: CommandValues) => {
   let targetDir = defaultDir
 
@@ -25,6 +27,7 @@ const getPrompts = async ({
     eslint: isEslintFlagUsed,
     stylelint: isStylelintFlagUsed,
     cssModule: isCssModuleFlagUsed,
+    jtsLoader: jtsLoader,
   }
 
   const promptValues = await prompts(
@@ -61,27 +64,6 @@ const getPrompts = async ({
         initial: () => toValidPackageName(targetDir),
         validate: (dir) => isValidPackageName(dir) || 'package.json name错误',
       },
-      // {
-      //   name: 'frame',
-      //   type: 'select',
-      //   message: yellow('请选择框架'),
-      //   choices: [
-      //     { title: 'React', value: 'react' },
-      //     { title: 'Vue', value: 'vue' },
-      //     { title: 'Svelte', value: 'svelte' }
-      //   ]
-      // },
-      // {
-      //   name: 'buildTools',
-      //   type: (prev) => prev === 'svelte'? null : 'select',
-      //   message: yellow('请选择构建工具'),
-      //   choices: [
-      //     { title: 'Webpack', value: 'webpack' },
-      //     { title: 'Vite', value: 'vite' },
-      //     { title: 'Esbuild', value: 'esbuild' },
-      //     { title: 'Swc', value: 'swc' }
-      //   ]
-      // },
       {
         name: 'typescript',
         type: () => (isTsFlagUsed ? null : 'toggle'),
@@ -105,6 +87,17 @@ const getPrompts = async ({
         initial: true,
         active: '是',
         inactive: '否',
+      },
+      {
+        name: 'jtsLoader',
+        type: 'select',
+        message: yellow('请选择Js/Ts文件的loader'),
+        hint: '用于编译时处理Js/Ts文件',
+        choices: [
+          { title: cyan('Babel-loader'), value: 'babel' },
+          { title: yellow('Esbuild-loader'), value: 'esbuild' },
+          { title: blue('Swc-loader'), value: 'swc' },
+        ],
       },
       {
         name: 'eslint',

@@ -1,3 +1,4 @@
+import { JtsLoaderName } from '../../scripts/src/types'
 export interface CommandValues {
   argv: unknown
   isTsFlagUsed?: boolean
@@ -8,6 +9,7 @@ export interface CommandValues {
   isEslintFlagUsed?: boolean
   isStylelintFlagUsed?: boolean
   isCssModuleFlagUsed?: boolean
+  jtsLoader?: JtsLoaderName
 }
 
 export interface PromptsResult {
@@ -21,4 +23,5 @@ export interface PromptsResult {
   eslint?: boolean
   stylelint?: boolean
   cssModule?: boolean
+  jtsLoader?: JtsLoaderName
 }

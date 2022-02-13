@@ -11,10 +11,12 @@ import {
   renderGitignore,
 } from './render'
 import { gray, green, bold } from 'kolorist'
+import { JtsLoader } from '../../scripts/src/types'
 
 export const createProject = async (result: PromptsResult) => {
   // eslint-disable-next-line no-unused-vars
-  const { projectName, overwrite, typescript, windiCss, eslint, stylelint, cssModule } = result
+  const { projectName, overwrite, typescript, windiCss, eslint, stylelint, cssModule, jtsLoader } =
+    result
   const root = process.env.ROOT
 
   if (overwrite) {
@@ -27,7 +29,7 @@ export const createProject = async (result: PromptsResult) => {
   renderPackage(result)
   render('base', typescript, windiCss)
   renderReadme(result)
-  renderCitcConfig(typescript, windiCss, cssModule)
+  renderCitcConfig(typescript, windiCss, cssModule, jtsLoader as unknown as JtsLoader)
   const typeDir = typescript ? 'react-ts' : 'react'
   typescript && render(typeDir)
   if (eslint) {
