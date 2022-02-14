@@ -17,7 +17,6 @@ export const renderPackage = ({
   typescript,
   jtsLoader,
 }: PromptsResult) => {
-  console.log(jtsLoader)
   const isLint = eslint || stylelint
   const tsPackage = {
     '@typescript-eslint/eslint-plugin': '^5.8.0',
