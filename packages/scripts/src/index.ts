@@ -22,7 +22,7 @@ const run = async () => {
 
     process.env.NODE_ENV = runCommand === 'start' ? 'development' : 'production'
     // 是否开启包大小分析
-    process.env.SIZE_ANALYZER = argv['size-analyzer'] ? 'open' : 'close'
+    process.env.SIZE_ANALYZER = argv['build-size-analyzer'] ? 'open' : 'close'
     // 是否开启打包时间分析
     process.env.BUILD_TIME_ANALYZER = argv['build-time-analyzer'] ? 'open' : 'close'
 
