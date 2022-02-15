@@ -1,6 +1,6 @@
 {
 	"devDependencies": {
-		"@renzp/scripts": "^0.0.15"
+		"@renzp/scripts": "^0.0.16"
 	},
 	"dependencies": {
 	  "react":"^17.0.2",
