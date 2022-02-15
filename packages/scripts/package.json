@@ -9,6 +9,7 @@
   "bin": {
     "citc-scripts": "./bin/index.js"
   },
+  "types": "./bin/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/renzp94/citc.git"
