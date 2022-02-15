@@ -205,7 +205,8 @@ export const renderCitcConfig = (
 
   fs.writeFileSync(
     path.resolve(process.env.ROOT, 'citc.config.js'),
-    'module.exports = {\n' +
+    `/** @type {import('@renzp/scripts/bin').Options} */\n` +
+      'module.exports = {\n' +
       `  typescript: ${typescript},\n` +
       `  windiCss: ${windiCss},\n` +
       `  cssModule: ${cssModule},\n` +
