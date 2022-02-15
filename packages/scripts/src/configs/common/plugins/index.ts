@@ -39,7 +39,7 @@ export default (webpackChain: WebpackChain, opts: Options) => {
     resolveForkTsCheckerWebpackPlugin(webpackChain, extensions.toString().replace(/\./g, ''))
   }
   if (webpackBuildInfo) {
-    resolveBuildInfoWebpackPlugin(webpackChain)
+    resolveBuildInfoWebpackPlugin(webpackChain, webpackBuildInfo)
   }
   // 包大小分析
   if (process.env.SIZE_ANALYZER === 'open') {

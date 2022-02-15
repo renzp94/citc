@@ -1,3 +1,4 @@
+import type { Options as BuildInfoWebpackPluginOptions } from '@renzp/build-info-webpack-plugin'
 export type JtsLoaderName = 'babel' | 'esbuild' | 'swc'
 
 export interface AnyObject {
@@ -35,7 +36,7 @@ export interface JtsLoader {
 
 export interface Options {
   /** 打包入口配置 */
-  entry: string | Array<string> | OptionEntry
+  entry: string | Array<string> | AnyObject
   /** 打包输出配置 */
   output?: string
   /** 静态文件目录配置 */
@@ -51,7 +52,7 @@ export interface Options {
   /** 是否使用css module */
   cssModule?: boolean
   /** 是否在控制台打印打包信息，详情见https://www.npmjs.com/package/@renzp/build-info-webpack-plugin */
-  webpackBuildInfo?: boolean
+  webpackBuildInfo?: boolean | BuildInfoWebpackPluginOptions
   /** Js/Ts文件打包配置 */
   jtsLoader: JtsLoader
 }
@@ -60,16 +61,4 @@ export interface ResolveJtsLoaderOptions {
   typescript?: boolean
   fileType?: string
   jtsLoader: JtsLoader
-}
-
-export interface OptionEntry {
-  [key: string]: string
-}
-
-export interface WebpackBuildInfo {
-  name: string
-  version: string
-  branchName: string
-  lastCommitHash8: string
-  time: string
 }
