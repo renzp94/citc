@@ -1,60 +1,39 @@
 import type WebpackChain from 'webpack-chain'
 import { requireResolve } from '../../utils'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import { AnyObject, Options } from '../../types'
 
-export default (webpackChain: WebpackChain, cssModule: boolean) => {
-  if (cssModule) {
-    // 配置cssModule
-    const cssModuleChain = webpackChain.module
-      .rule('css-module')
-      .test(/\.module\.css$/i)
-      .exclude.add(/node_modules/)
-      .end()
-
-    if (process.env.NODE_ENV === 'development') {
-      cssModuleChain.use('style-loader').loader(requireResolve('style-loader'))
-    } else {
-      cssModuleChain.use('mini-css-extract-loader').loader(MiniCssExtractPlugin.loader)
-    }
-
-    cssModuleChain
-      .use('css-loader')
-      .loader(requireResolve('css-loader'))
-      .options({
-        modules: {
-          auto: true,
-          localIdentName: '[local]--[hash:base64:10]',
-        },
-      })
-      .end()
-      .use('postcss-loader')
-      .loader(requireResolve('postcss-loader'))
-      .options({
-        postcssOptions: {
-          plugins: [requireResolve('postcss-preset-env')],
-        },
-      })
-  }
-
-  // 配置css
-  const cssChain = webpackChain.module
-    .rule('css')
-    .test(/\.css$/i)
-    .exclude.add(/\.module\.css$/i)
-    .end()
-
+/**
+ * 应用公共css loader
+ * @param rule rule实例
+ * @param cssModule 是否为css module
+ * @returns 返回rule实例
+ */
+const applyCommonLoader = (
+  rule: WebpackChain.Rule<WebpackChain.Rule<WebpackChain.Module>>,
+  cssModule?: boolean
+) => {
   if (process.env.NODE_ENV === 'development') {
-    cssChain.use('style-loader').loader(requireResolve('style-loader'))
+    rule.use('style-loader').loader(requireResolve('style-loader'))
   } else {
-    cssChain.use('mini-css-extract-loader').loader(MiniCssExtractPlugin.loader)
+    rule.use('mini-css-extract-loader').loader(MiniCssExtractPlugin.loader)
   }
 
-  cssChain
+  rule
     .use('css-loader')
     .loader(requireResolve('css-loader'))
-    .options({
-      modules: false,
-    })
+    .options(
+      cssModule
+        ? {
+            modules: {
+              auto: true,
+              localIdentName: '[local]--[hash:base64:10]',
+            },
+          }
+        : {
+            modules: false,
+          }
+    )
     .end()
     .use('postcss-loader')
     .loader(requireResolve('postcss-loader'))
@@ -63,4 +42,57 @@ export default (webpackChain: WebpackChain, cssModule: boolean) => {
         plugins: [requireResolve('postcss-preset-env')],
       },
     })
+    .end()
+
+  return rule
+}
+/**
+ * 创建css规则
+ * @param baseRule rule实例
+ * @param lang css语言
+ * @param cssModule 是否为css module
+ * @param options loader的配置
+ */
+export const createCssRule = (
+  baseRule: WebpackChain.Rule<WebpackChain.Module>,
+  lang: string,
+  cssModule: boolean,
+  options?: boolean | AnyObject
+) => {
+  const regexps = {
+    css: [/\.css$/, /\.module\.css$/],
+    less: [/\.less$/, /\.module\.less$/],
+    sass: [/\.(scss|sass)$/, /\.module\.(scss|sass)$/],
+  }
+  const loaders = {
+    less: 'less-loader',
+    sass: 'sass-loader',
+  }
+  const [cssTest, cssModuleTest] = regexps[lang]
+  const loader = loaders[lang]
+  let rule = baseRule.oneOf(lang).test(cssTest).exclude.add(cssModuleTest).end()
+  applyCommonLoader(rule)
+
+  if (cssModule) {
+    const moduleRule = baseRule.oneOf(`${lang}-module`).test(cssModuleTest)
+    rule = applyCommonLoader(moduleRule, true)
+    if (loader) {
+      rule
+        .use(loader)
+        .loader(requireResolve(loader))
+        .options(typeof options === 'boolean' ? undefined : options)
+    }
+  }
+}
+
+export default (webpackChain: WebpackChain, opts: Options) => {
+  const { cssModule, less, sass } = opts ?? {}
+  const baseRule = webpackChain.module.rule('css')
+  createCssRule(baseRule, 'css', cssModule)
+  if (less) {
+    createCssRule(baseRule, 'less', cssModule, less)
+  }
+  if (sass) {
+    createCssRule(baseRule, 'sass', cssModule, sass)
+  }
 }

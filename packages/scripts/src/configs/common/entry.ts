@@ -1,7 +1,7 @@
 import { red } from 'kolorist'
 import fs from 'fs'
 import type WebpackChain from 'webpack-chain'
-import type { OptionEntry, Options } from '../../types'
+import type { AnyObject, Options } from '../../types'
 import { getJtsFileType, pathResolve } from '../../utils'
 
 export default (webpackChain: WebpackChain, opts: Options) => {
@@ -45,15 +45,15 @@ export default (webpackChain: WebpackChain, opts: Options) => {
             [key]: item,
           }
         })
-        entryOption.forEach((item: OptionEntry) => {
+        entryOption.forEach((item: AnyObject) => {
           const key = Object.keys(item)[0]
-          webpackChain.entry(key).add(item[key])
+          webpackChain.entry(key).add(item[key] as string)
         })
         break
       case typeof entry === 'object':
-        entryOption.forEach((item: OptionEntry) => {
+        entryOption.forEach((item: AnyObject) => {
           const key = Object.keys(item)[0]
-          webpackChain.entry(key).add(item[key])
+          webpackChain.entry(key).add(item[key] as string)
         })
         break
     }

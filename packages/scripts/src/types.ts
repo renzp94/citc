@@ -58,6 +58,10 @@ export interface Options {
   webpackBuildInfo?: boolean | BuildInfoWebpackPluginOptions
   /** Js/Ts文件打包配置 */
   jtsLoader: JtsLoader
+  /** less配置 */
+  less: boolean | AnyObject
+  /** sass配置 */
+  sass: boolean | AnyObject
 }
 
 export interface ResolveJtsLoaderOptions {

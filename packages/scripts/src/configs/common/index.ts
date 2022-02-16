@@ -9,12 +9,12 @@ import resolveAssets from './assets'
 import resolveMinimizer from './minimizer'
 
 export default (opts?: Options) => {
-  const { typescript, cssModule, jtsLoader } = opts ?? {}
+  const { typescript, jtsLoader } = opts ?? {}
   const webpackChain = new WebpackChain()
   resolveEntry(webpackChain, opts)
   resolveResolve(webpackChain, typescript)
   resolveJts(webpackChain, { typescript, jtsLoader })
-  resolveCss(webpackChain, cssModule)
+  resolveCss(webpackChain, opts)
   resolveAssets(webpackChain)
   resolvePlugins(webpackChain, opts)
   if (process.env.NODE_ENV === 'production') {
