@@ -1,6 +1,6 @@
 import type { CommandValues, PromptsResult } from './types'
 import prompts from 'prompts'
-import { red, yellow, blue } from 'kolorist'
+import { red, yellow, blue, magenta } from 'kolorist'
 import { canSafelyOverwrite, isValidPackageName, toValidPackageName } from './utils'
 import path from 'path'
 import { cyan } from 'kolorist'
@@ -14,9 +14,20 @@ const getPrompts = async ({
   isEslintFlagUsed,
   isStylelintFlagUsed,
   isCssModuleFlagUsed,
+  isLessFlagUsed,
+  isSassFlagUsed,
   jtsLoader,
 }: CommandValues) => {
   let targetDir = defaultDir
+
+  let cssPreprocessor
+  if (isLessFlagUsed) {
+    cssPreprocessor = 'less'
+  }
+
+  if (isSassFlagUsed) {
+    cssPreprocessor = 'sass'
+  }
 
   let result: PromptsResult = {
     projectName: defaultProjectName,
@@ -27,6 +38,7 @@ const getPrompts = async ({
     eslint: isEslintFlagUsed,
     stylelint: isStylelintFlagUsed,
     cssModule: isCssModuleFlagUsed,
+    cssPreprocessor,
     jtsLoader: jtsLoader,
   }
 
@@ -75,10 +87,28 @@ const getPrompts = async ({
       {
         name: 'windiCss',
         type: () => (isWindiCssFlagUsed ? null : 'toggle'),
-        message: yellow('是否使用windiCss ?'),
+        message: yellow('是否使用WindiCss ?'),
         initial: false,
         active: '是',
         inactive: '否',
+      },
+      {
+        name: 'isUseCssPreprocessor',
+        type: () => (cssPreprocessor ? null : 'toggle'),
+        message: yellow('是否使用Css预处理器?'),
+        initial: false,
+        active: '是',
+        inactive: '否',
+      },
+      {
+        name: 'cssPreprocessor',
+        type: (pre: boolean) => (!pre || cssPreprocessor ? null : 'select'),
+        message: yellow('请选择Css预处理器'),
+        hint: '默认支持Postcss Autoprefixer',
+        choices: [
+          { title: cyan('Less'), value: 'less' },
+          { title: magenta('Sass'), value: 'sass' },
+        ],
       },
       {
         name: 'cssModule',
@@ -110,7 +140,7 @@ const getPrompts = async ({
       {
         name: 'stylelint',
         type: () => (isStylelintFlagUsed ? null : 'toggle'),
-        message: yellow('是否使用stylelint ?'),
+        message: yellow('是否使用Stylelint ?'),
         initial: true,
         active: '是',
         inactive: '否',

@@ -1,7 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import type { JtsLoader } from '../../scripts/src/types'
-import { PromptsResult } from './types'
+import { CssPreprocessor, PromptsResult } from './types'
 import { appendFileContent, deepMerge, sortDependencies } from './utils'
 
 const templateRoot = path.resolve(__dirname, '../template')
@@ -187,20 +186,25 @@ export const renderTemplate = (
 }
 /**
  * 渲染citc.config文件
- * @param {boolean} typescript 是否使用ts
- * @param {boolean} eslint 是否使用eslint
- * @param {boolean} stylelint 是否使用stylelint
+ * @param {PromptsResult} result
  */
-export const renderCitcConfig = (
-  typescript = false,
-  windiCss = false,
-  cssModule = false,
-  jtsLoader: JtsLoader
-) => {
+export const renderCitcConfig = (result: PromptsResult) => {
+  const {
+    typescript = false,
+    windiCss = false,
+    cssModule = false,
+    jtsLoader,
+    cssPreprocessor,
+  } = result
   const fileType = typescript ? 'ts' : 'js'
   let jtsConfig = ''
-  if (jtsLoader) {
+  if (jtsLoader && jtsLoader !== 'babel') {
     jtsConfig = `  jtsLoader: {\n    loader: '${jtsLoader}',\n  },\n`
+  }
+
+  let cssPreprocessorConfig = ''
+  if (cssPreprocessor) {
+    cssPreprocessorConfig += `  ${cssPreprocessor}: true,\n`
   }
 
   fs.writeFileSync(
@@ -210,6 +214,7 @@ export const renderCitcConfig = (
       `  typescript: ${typescript},\n` +
       `  windiCss: ${windiCss},\n` +
       `  cssModule: ${cssModule},\n` +
+      cssPreprocessorConfig +
       jtsConfig +
       '}\n'
   )
@@ -275,4 +280,21 @@ export const renderGitignore = () => {
     path.resolve(process.env.ROOT, '.gitignore'),
     'node_modules\n*.log\n.vscode\ndist\n'
   )
+}
+/**
+ * 追加css预处理器css module类型
+ * @param cssPreprocessor css与处理器
+ */
+export const appendCssPreprocessorModuleType = (cssPreprocessor: CssPreprocessor) => {
+  const file = path.resolve(process.env.ROOT, '@types/css-module.d.ts')
+  const content =
+    `declare module '*.module.${cssPreprocessor === 'sass' ? 'scss' : cssPreprocessor}' {\n` +
+    '  interface Classes {\n' +
+    '    [key: string]: string\n' +
+    '  }\n' +
+    '  const classes: Classes\n' +
+    '  export default classes\n' +
+    '}\n'
+
+  appendFileContent(file, content)
 }

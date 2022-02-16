@@ -9,8 +9,12 @@ export interface CommandValues {
   isEslintFlagUsed?: boolean
   isStylelintFlagUsed?: boolean
   isCssModuleFlagUsed?: boolean
+  isLessFlagUsed?: boolean
+  isSassFlagUsed?: boolean
   jtsLoader?: JtsLoaderName
 }
+
+export type CssPreprocessor = 'less' | 'sass'
 
 export interface PromptsResult {
   projectName?: string
@@ -23,5 +27,6 @@ export interface PromptsResult {
   eslint?: boolean
   stylelint?: boolean
   cssModule?: boolean
+  cssPreprocessor?: CssPreprocessor
   jtsLoader?: JtsLoaderName
 }

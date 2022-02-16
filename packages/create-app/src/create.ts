@@ -9,14 +9,22 @@ import {
   renderPackage,
   renderReadme,
   renderGitignore,
+  appendCssPreprocessorModuleType,
 } from './render'
 import { gray, green, bold } from 'kolorist'
-import { JtsLoader } from '../../scripts/src/types'
 
 export const createProject = async (result: PromptsResult) => {
   // eslint-disable-next-line no-unused-vars
-  const { projectName, overwrite, typescript, windiCss, eslint, stylelint, cssModule, jtsLoader } =
-    result
+  const {
+    projectName,
+    overwrite,
+    typescript,
+    windiCss,
+    eslint,
+    stylelint,
+    cssModule,
+    cssPreprocessor,
+  } = result
   const root = process.env.ROOT
 
   if (overwrite) {
@@ -29,7 +37,7 @@ export const createProject = async (result: PromptsResult) => {
   renderPackage(result)
   render('base', typescript, windiCss)
   renderReadme(result)
-  renderCitcConfig(typescript, windiCss, cssModule, jtsLoader as unknown as JtsLoader)
+  renderCitcConfig(result)
   const typeDir = typescript ? 'react-ts' : 'react'
   typescript && render(typeDir)
   if (eslint) {
@@ -42,7 +50,10 @@ export const createProject = async (result: PromptsResult) => {
   if (typescript) {
     copyTemplateFile('fonts.d.ts', '@types', '@types')
     copyTemplateFile('images.d.ts', '@types', '@types')
-    cssModule && copyTemplateFile('css-module.d.ts', '@types', '@types')
+    if (cssModule) {
+      copyTemplateFile('css-module.d.ts', '@types', '@types')
+      cssPreprocessor && appendCssPreprocessorModuleType(cssPreprocessor)
+    }
   }
   if (eslint || stylelint) {
     renderHuskyAndLintstagedrc(typescript, eslint, stylelint)
