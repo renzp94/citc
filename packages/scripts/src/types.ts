@@ -1,3 +1,4 @@
+import type WebpackChain from 'webpack-chain'
 import type { Options as BuildInfoWebpackPluginOptions } from '@renzp/build-info-webpack-plugin'
 export type JtsLoaderName = 'babel' | 'esbuild' | 'swc'
 
@@ -51,6 +52,8 @@ export interface Options {
   windiCss?: boolean
   /** 是否使用css module */
   cssModule?: boolean
+  // eslint-disable-next-line no-unused-vars
+  webpackChain?: (webpackChain: WebpackChain) => void
   /** 是否在控制台打印打包信息，详情见https://www.npmjs.com/package/@renzp/build-info-webpack-plugin */
   webpackBuildInfo?: boolean | BuildInfoWebpackPluginOptions
   /** Js/Ts文件打包配置 */
