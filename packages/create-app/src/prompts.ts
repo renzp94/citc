@@ -1,6 +1,6 @@
 import type { CommandValues, PromptsResult } from './types'
 import prompts from 'prompts'
-import { red, yellow, blue, magenta } from 'kolorist'
+import { red, yellow, blue, magenta, gray } from 'kolorist'
 import { canSafelyOverwrite, isValidPackageName, toValidPackageName } from './utils'
 import path from 'path'
 import { cyan } from 'kolorist'
@@ -93,19 +93,12 @@ const getPrompts = async ({
         inactive: '否',
       },
       {
-        name: 'isUseCssPreprocessor',
-        type: () => (cssPreprocessor ? null : 'toggle'),
-        message: yellow('是否使用Css预处理器?'),
-        initial: false,
-        active: '是',
-        inactive: '否',
-      },
-      {
         name: 'cssPreprocessor',
-        type: (pre: boolean) => (!pre || cssPreprocessor ? null : 'select'),
+        type: () => (cssPreprocessor ? null : 'select'),
         message: yellow('请选择Css预处理器'),
         hint: '默认支持Postcss Autoprefixer',
         choices: [
+          { title: gray('无'), value: undefined },
           { title: cyan('Less'), value: 'less' },
           { title: magenta('Sass'), value: 'sass' },
         ],
