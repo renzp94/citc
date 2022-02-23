@@ -65,12 +65,14 @@ export const renderPackage = ({
  * 在目标目录下生成README.md
  * @param {string} projectName 项目名
  */
-export const renderReadme = ({ projectName, eslint, stylelint, windiCss }: PromptsResult) => {
+export const renderReadme = ({ projectName, eslint, stylelint, atomCss }: PromptsResult) => {
   let pluginInfo = '\n'
-  if (eslint || stylelint || windiCss) {
+  if (eslint || stylelint || atomCss) {
     const eslintPlugin = '- `ESLint`\n' + '- `Prettier - Code formatter`\n'
     const stylelintPlugin = '- `Stylelint`\n'
     const windiCssPlugin = '- `WindiCSS IntelliSense`\n'
+    const tailwindCssPlugin = '- `Tailwind CSS IntelliSense`\n'
+    const atomCssPlugin = atomCss === 'windicss' ? windiCssPlugin : tailwindCssPlugin
 
     const vscodeSettingTitle =
       '## 配置 Vscode\n\n' + '在`Vscode`配置文件`settings.json`中添加如下配置\n\n'
@@ -92,8 +94,8 @@ export const renderReadme = ({ projectName, eslint, stylelint, windiCss }: Promp
       '}\n' +
       '```\n\n'
 
-    const windiCssSettings =
-      '### 配置 WindiCss\n\n' +
+    const atomCssSettings =
+      `### 配置 ${atomCss}\n\n` +
       '```json\n' +
       '"editor.quickSuggestions": {\n' +
       '  "strings": true\n' +
@@ -104,11 +106,11 @@ export const renderReadme = ({ projectName, eslint, stylelint, windiCss }: Promp
       '## Vscode 插件\n\n' +
       (eslint ? eslintPlugin : '') +
       (stylelint ? stylelintPlugin : '') +
-      (windiCss ? windiCssPlugin : '') +
+      (atomCss ? atomCssPlugin : '') +
       '\n' +
       vscodeSettingTitle +
       (eslint ? eslintSettings : '') +
-      (windiCss ? windiCssSettings : '') +
+      (atomCss ? atomCssSettings : '') +
       '\n'
   }
   const info =
@@ -133,9 +135,9 @@ export const renderReadme = ({ projectName, eslint, stylelint, windiCss }: Promp
  * @param {boolean} typescript 是否使用ts
  * @param {boolean} windiCss 是否使用windiCss
  */
-export const render = (templateName: string, typescript?: boolean, windiCss?: boolean) => {
+export const render = (templateName: string, typescript?: boolean) => {
   const templateDir = path.resolve(templateRoot, templateName)
-  renderTemplate(templateDir, process.env.ROOT, typescript, windiCss)
+  renderTemplate(templateDir, process.env.ROOT, typescript)
 }
 /**
  * 将源目录下的文件复制到指定目录目录下
@@ -145,19 +147,14 @@ export const render = (templateName: string, typescript?: boolean, windiCss?: bo
  * @param {boolean} typescript 是否使用ts
  * @param {boolean} windiCss 是否使用windiCss
  */
-export const renderTemplate = (
-  src: string,
-  dest: string,
-  typescript?: boolean,
-  windiCss?: boolean
-) => {
+export const renderTemplate = (src: string, dest: string, typescript?: boolean) => {
   const stats = fs.statSync(src)
 
   if (stats.isDirectory()) {
     // 如果是目录则递归复制
     fs.mkdirSync(dest, { recursive: true })
     for (const file of fs.readdirSync(src)) {
-      renderTemplate(path.resolve(src, file), path.resolve(dest, file), typescript, windiCss)
+      renderTemplate(path.resolve(src, file), path.resolve(dest, file), typescript)
     }
     return
   }
@@ -179,24 +176,13 @@ export const renderTemplate = (
   }
 
   fs.copyFileSync(src, dest)
-  // 如果使用windiCss，则追加样式导入代码
-  if (windiCss && filename.includes('main.')) {
-    appendFileContent(dest, `import 'windi.css'`, 2)
-  }
 }
 /**
  * 渲染citc.config文件
  * @param {PromptsResult} result
  */
 export const renderCitcConfig = (result: PromptsResult) => {
-  const {
-    typescript = false,
-    windiCss = false,
-    cssModule = false,
-    jtsLoader,
-    cssPreprocessor,
-  } = result
-  const fileType = typescript ? 'ts' : 'js'
+  const { typescript = false, cssModule = false, jtsLoader, cssPreprocessor } = result
   let jtsConfig = ''
   if (jtsLoader && jtsLoader !== 'babel') {
     jtsConfig = `  jtsLoader: {\n    loader: '${jtsLoader}',\n  },\n`
@@ -212,24 +198,11 @@ export const renderCitcConfig = (result: PromptsResult) => {
     `/** @type {import('@renzp/scripts/bin').Options} */\n` +
       'module.exports = {\n' +
       `  typescript: ${typescript},\n` +
-      `  windiCss: ${windiCss},\n` +
       `  cssModule: ${cssModule},\n` +
       cssPreprocessorConfig +
       jtsConfig +
       '}\n'
   )
-
-  if (windiCss) {
-    fs.writeFileSync(
-      path.resolve(process.env.ROOT, 'windi.config.js'),
-      'export default {\n' +
-        '  extract: {\n' +
-        `    include: ['**/*.${fileType}x'],\n` +
-        `    exclude: ['node_modules', '.git', 'dist'],\n` +
-        '  },\n' +
-        '}\n'
-    )
-  }
 }
 /**
  * 渲染.husky和.lintstagedrc文件
@@ -297,4 +270,47 @@ export const appendCssPreprocessorModuleType = (cssPreprocessor: CssPreprocessor
     '}\n'
 
   appendFileContent(file, content)
+}
+/**
+ * 渲染css原子化框架内容
+ * @param atomCss css原子化框架
+ * @param typescript 是否为ts
+ * @param stylelint 是否使用stylelint
+ */
+export const renderAtomCss = (atomCss: string, typescript: boolean, stylelint: boolean) => {
+  const fileType = typescript ? 'tsx' : 'jsx'
+  // 如果使用css原子化框剪，则追加样式导入代码
+  atomCss === 'tailwindcss' &&
+    fs.writeFileSync(
+      path.resolve(process.env.ROOT, 'src/main.css'),
+      (stylelint ? `/* stylelint-disable at-rule-no-unknown */\n` : '') +
+        '@tailwind base;\n' +
+        '@tailwind components;\n' +
+        '@tailwind utilities;\n'
+    )
+
+  appendFileContent(
+    path.resolve(process.env.ROOT, `src/main.${fileType}`),
+    atomCss === 'windicss' ? `import 'windi.css'` : `import './main.css'`,
+    2
+  )
+}
+/**
+ * 渲染css原子化框架配置文件
+ * @param atomCss css原子化框架
+ * @param fileType 文件类型
+ */
+export const renderAtomCssConfigFile = (atomCss: string, typescript: boolean) => {
+  const fileName = `${atomCss.replace('css', '')}.config.js`
+  const fileType = typescript ? 'tsx' : ' jsx'
+  const content =
+    atomCss === 'windicss'
+      ? 'export default {\n' +
+        '  extract: {\n' +
+        `    include: ['**/*.${fileType}'],\n` +
+        `    exclude: ['node_modules', '.git', 'dist'],\n` +
+        '  },\n' +
+        '}\n'
+      : 'module.exports = {\n' + `  content: ['./src/**/*.${fileType}'],\n` + '}\n'
+  fs.writeFileSync(path.resolve(process.env.ROOT, fileName), content)
 }

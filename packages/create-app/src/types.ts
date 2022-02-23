@@ -5,7 +5,7 @@ export interface CommandValues {
   targetDir?: string
   defaultProjectName?: string
   forceOverwrite?: boolean
-  isWindiCssFlagUsed?: boolean
+  atomCss?: string
   isEslintFlagUsed?: boolean
   isStylelintFlagUsed?: boolean
   isCssModuleFlagUsed?: boolean
@@ -23,7 +23,7 @@ export interface PromptsResult {
   buildTools?: 'webpack' | 'vite' | 'esbuild' | `swc`
   frame?: 'react' | 'vue' | 'svelte'
   typescript?: boolean
-  windiCss?: boolean
+  atomCss?: string
   eslint?: boolean
   stylelint?: boolean
   cssModule?: boolean

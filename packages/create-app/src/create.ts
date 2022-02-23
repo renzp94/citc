@@ -10,6 +10,8 @@ import {
   renderReadme,
   renderGitignore,
   appendCssPreprocessorModuleType,
+  renderAtomCss,
+  renderAtomCssConfigFile,
 } from './render'
 import { gray, green, bold } from 'kolorist'
 
@@ -19,7 +21,7 @@ export const createProject = async (result: PromptsResult) => {
     projectName,
     overwrite,
     typescript,
-    windiCss,
+    atomCss,
     eslint,
     stylelint,
     cssModule,
@@ -35,9 +37,13 @@ export const createProject = async (result: PromptsResult) => {
   }
   console.log(gray(`⌛ 正在${root}目录中创建项目...`))
   renderPackage(result)
-  render('base', typescript, windiCss)
+  render('base', typescript)
   renderReadme(result)
   renderCitcConfig(result)
+  if (atomCss) {
+    renderAtomCss(atomCss, typescript, stylelint)
+    renderAtomCssConfigFile(atomCss, typescript)
+  }
   const typeDir = typescript ? 'react-ts' : 'react'
   typescript && render(typeDir)
   if (eslint) {

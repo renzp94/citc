@@ -1,5 +1,6 @@
 import type { CommandValues } from './types'
 import minimist from 'minimist'
+import { red } from 'kolorist'
 
 const getCommandValues = (): CommandValues => {
   // 所有命令行参数
@@ -12,8 +13,7 @@ const getCommandValues = (): CommandValues => {
   const defaultProjectName = targetDir ?? 'citc-project'
   // 是否覆盖
   const forceOverwrite = argv.force
-  // 是否使用WindiCss
-  const isWindiCssFlagUsed = typeof argv.windiCss === 'boolean'
+
   // 是否使用eslint
   const isEslintFlagUsed = typeof argv.eslint === 'boolean'
   // 是否使用stylelint
@@ -25,6 +25,12 @@ const getCommandValues = (): CommandValues => {
   // 是否使用Sass
   const isSassFlagUsed = typeof argv.sass === 'boolean'
   const jtsLoader = argv.jtsLoader
+  // css原子化框架
+  const atomCssFrameworks = ['windicss', 'tailwindcss']
+  if (argv.css && !atomCssFrameworks.includes(argv.css)) {
+    console.log(red(`🚨 css取值只能为${atomCssFrameworks.join('/')}，当前值为${argv.css}`))
+    process.exit(-1)
+  }
 
   return {
     argv,
@@ -32,7 +38,7 @@ const getCommandValues = (): CommandValues => {
     targetDir,
     defaultProjectName,
     forceOverwrite,
-    isWindiCssFlagUsed,
+    atomCss: argv.css,
     isEslintFlagUsed,
     isStylelintFlagUsed,
     isCssModuleFlagUsed,
