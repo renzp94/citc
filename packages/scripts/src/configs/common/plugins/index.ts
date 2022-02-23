@@ -17,7 +17,7 @@ export default (webpackChain: WebpackChain, opts: Options) => {
   const {
     title,
     typescript,
-    windiCss,
+    atomCss,
     staticDir = 'static',
     template = 'index.html',
     webpackBuildInfo,
@@ -32,7 +32,7 @@ export default (webpackChain: WebpackChain, opts: Options) => {
   resolveProgressWebpackPlugin(webpackChain)
   resolveEslintWebpackPlugin(webpackChain, { cwd, extensions })
   resolveCopyWebpackPlugin(webpackChain, pathResolve(cwd, staticDir))
-  if (windiCss) {
+  if (atomCss === 'windicss') {
     resolveWindicssWebpackPlugin(webpackChain)
   }
   if (typescript) {

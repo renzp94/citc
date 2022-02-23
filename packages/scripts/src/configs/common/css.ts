@@ -1,22 +1,41 @@
 import type WebpackChain from 'webpack-chain'
 import { requireResolve } from '../../utils'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
-import { AnyObject, Options } from '../../types'
+import { AnyObject, AtomCss, Options } from '../../types'
 
 /**
  * 应用公共css loader
  * @param rule rule实例
+ * @param atomCss 原子化Css框架
  * @param cssModule 是否为css module
  * @returns 返回rule实例
  */
 const applyCommonLoader = (
   rule: WebpackChain.Rule<WebpackChain.Rule<WebpackChain.Module>>,
+  atomCss: AtomCss,
   cssModule?: boolean
 ) => {
   if (process.env.NODE_ENV === 'development') {
     rule.use('style-loader').loader(requireResolve('style-loader'))
   } else {
     rule.use('mini-css-extract-loader').loader(MiniCssExtractPlugin.loader)
+  }
+
+  const postcssPlugins: Array<unknown> = [
+    requireResolve('postcss-flexbugs-fixes'),
+    [
+      requireResolve('postcss-preset-env'),
+      {
+        autoprefixer: {
+          flexbox: 'no-2009',
+        },
+        stage: 3,
+      },
+    ],
+  ]
+
+  if (atomCss === 'tailwindcss') {
+    postcssPlugins.unshift('tailwindcss')
   }
 
   rule
@@ -39,7 +58,9 @@ const applyCommonLoader = (
     .loader(requireResolve('postcss-loader'))
     .options({
       postcssOptions: {
-        plugins: [requireResolve('postcss-preset-env')],
+        ident: 'postcss',
+        config: false,
+        plugins: postcssPlugins,
       },
     })
     .end()
@@ -57,6 +78,7 @@ export const createCssRule = (
   baseRule: WebpackChain.Rule<WebpackChain.Module>,
   lang: string,
   cssModule: boolean,
+  atomCss: AtomCss,
   options?: boolean | AnyObject
 ) => {
   const regexps = {
@@ -71,11 +93,11 @@ export const createCssRule = (
   const [cssTest, cssModuleTest] = regexps[lang]
   const loader = loaders[lang]
   let rule = baseRule.oneOf(lang).test(cssTest).exclude.add(cssModuleTest).end()
-  applyCommonLoader(rule)
+  applyCommonLoader(rule, atomCss)
 
   if (cssModule) {
     const moduleRule = baseRule.oneOf(`${lang}-module`).test(cssModuleTest)
-    rule = applyCommonLoader(moduleRule, true)
+    rule = applyCommonLoader(moduleRule, atomCss, true)
     if (loader) {
       rule
         .use(loader)
@@ -86,13 +108,13 @@ export const createCssRule = (
 }
 
 export default (webpackChain: WebpackChain, opts: Options) => {
-  const { cssModule, less, sass } = opts ?? {}
+  const { cssModule, less, sass, atomCss } = opts ?? {}
   const baseRule = webpackChain.module.rule('css')
-  createCssRule(baseRule, 'css', cssModule)
+  createCssRule(baseRule, 'css', cssModule, atomCss)
   if (less) {
-    createCssRule(baseRule, 'less', cssModule, less)
+    createCssRule(baseRule, 'less', cssModule, atomCss, less)
   }
   if (sass) {
-    createCssRule(baseRule, 'sass', cssModule, sass)
+    createCssRule(baseRule, 'sass', cssModule, atomCss, sass)
   }
 }

@@ -35,6 +35,8 @@ export interface JtsLoader {
   swc: AnyObject
 }
 
+export type AtomCss = 'windicss' | 'tailwindcss'
+
 export interface Options {
   /** 打包入口配置 */
   entry: string | Array<string> | AnyObject
@@ -48,8 +50,9 @@ export interface Options {
   template?: string
   /** 是否使用typescript */
   typescript?: boolean
-  /** 是否使用windicss */
-  windiCss?: boolean
+  /** 原子化框架 */
+  atomCss: AtomCss
+  tailwindcss?: boolean
   /** 是否使用css module */
   cssModule?: boolean
   // eslint-disable-next-line no-unused-vars
