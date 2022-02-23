@@ -7,7 +7,7 @@ import resolveDevConfig from './configs/develop'
 
 export default async (configFile: string | undefined) => {
   console.log(gray(`⌛ 正在启动开发服务...`))
-  const webpackChain = await loadConfigFile(configFile)
+  const webpackChain = loadConfigFile(configFile)
   // 合并开发环境配置
   await resolveDevConfig(webpackChain)
   const configs: Configuration = webpackChain.toConfig()

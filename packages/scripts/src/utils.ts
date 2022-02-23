@@ -11,17 +11,13 @@ import dotenvExpand from 'dotenv-expand'
  * @param file 文件路径
  * @returns Promise<boolean>
  */
-export const fileExists = (file: string): Promise<boolean> => {
-  return new Promise((resolve) => {
-    fs.access(file, fs.constants.F_OK, (err) => resolve(!err))
-  })
-}
+export const fileExists = (file: string): boolean => fs.existsSync(file)
 /**
  * 获取配置文件全路径
  * @param file 配置文件，未指定则使用默认配置文件路径./citc.config.js
  * @returns 找到则返回全路径，否则返回undefined
  */
-export const getConfigFilePath = async (file: string | string[]): Promise<string | undefined> => {
+export const getConfigFilePath = (file: string | string[]): string | undefined => {
   let filePath
   let isExists = false
   if (!file) {
@@ -30,11 +26,11 @@ export const getConfigFilePath = async (file: string | string[]): Promise<string
 
   if (typeof file === 'string') {
     filePath = path.resolve(process.cwd(), file)
-    isExists = await fileExists(filePath)
+    isExists = fileExists(filePath)
   } else {
-    for await (const fileItem of file) {
+    for (const fileItem of file) {
       filePath = path.resolve(process.cwd(), fileItem)
-      isExists = await fileExists(filePath)
+      isExists = fileExists(filePath)
       if (isExists) {
         break
       }
@@ -60,10 +56,10 @@ export const pathResolve = (root = __dirname, dir: string) => path.resolve(root,
  * @param configFilPath 配置文件的相对路径
  * @returns 若配置文件存在则返回WebpackChain，否则返回
  */
-export const loadConfigFile = async (configFilPath: string | undefined) => {
+export const loadConfigFile = (configFilPath: string | undefined) => {
   let webpackChain: WebpackChain
   console.log(gray(`⌛ 读取配置文件...`))
-  const filePath = await getConfigFilePath(configFilPath)
+  const filePath = getConfigFilePath(configFilPath)
   // 配置了配置文件地址，但未找到提示并退出
   if (configFilPath && !filePath) {
     console.log(red(`🚨 未找到配置文件：${configFilPath}`))

@@ -4,9 +4,9 @@ import Webpack from 'webpack'
 import { loadConfigFile } from './utils'
 import resolveProdConfig from './configs/production'
 
-export default async (configFile: string | undefined) => {
+export default (configFile: string | undefined) => {
   console.log(gray(`⌛ 启动打包构建...`))
-  const webpackChain = await loadConfigFile(configFile)
+  const webpackChain = loadConfigFile(configFile)
   // 合并打包配置
   resolveProdConfig(webpackChain)
   const configs: Configuration = webpackChain.toConfig()
