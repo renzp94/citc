@@ -17,6 +17,7 @@ export default (webpackChain: WebpackChain, typescript: boolean, jtsLoader: JtsL
           targets: 'es2015',
           useBuiltIns: 'usage',
           corejs: 3,
+          loose: true,
         },
         userPresetEnvOptions
       )
@@ -64,7 +65,8 @@ export default (webpackChain: WebpackChain, typescript: boolean, jtsLoader: JtsL
           presets,
           plugins: [
             transformRuntime,
-            requireResolve('@babel/plugin-proposal-class-properties'),
+            [requireResolve('@babel/plugin-proposal-decorators'), { legacy: true }],
+            [requireResolve('@babel/plugin-proposal-class-properties'), { loose: true }],
             requireResolve('@babel/plugin-proposal-object-rest-spread'),
             requireResolve('@babel/plugin-syntax-dynamic-import'),
             requireResolve('babel-plugin-transform-react-remove-prop-types'),
