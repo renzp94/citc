@@ -70,7 +70,8 @@ export const loadConfigFile = (configFilPath: string | undefined) => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const userConfigs = require(filePath)
     if (typeof userConfigs === 'object') {
-      const { webpackChain: resolveUserWebpackConfig } = userConfigs
+      const { webpackChain: resolveUserWebpackConfig, dll } = userConfigs
+      process.env.DLL = dll ?? ''
       webpackChain = resolveCommonConfig(userConfigs)
       resolveUserWebpackConfig?.(webpackChain)
       // 如果是一个函数则默认为webpackChain配置
@@ -82,7 +83,6 @@ export const loadConfigFile = (configFilPath: string | undefined) => {
       process.exit(1)
     }
 
-    // webpackChain = getUserConfigs(baseWebpackChain)
     console.log(gray(`✨ 读取配置文件成功`))
   } else {
     const baseWebpackChain = resolveCommonConfig()

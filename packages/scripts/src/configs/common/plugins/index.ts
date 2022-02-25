@@ -12,6 +12,7 @@ import resolveCopyWebpackPlugin from './copy-webpack-plugin'
 import resolveBuildInfoWebpackPlugin from './build-info-webpack-plugin'
 import resolveWebpackBundleAnalyzer from './webpack-bundle-analyzer'
 import resolveSpeedMeasureWebpackPlugin from './speed-measure-webpack-plugin'
+import { dllDirExist, resolveDllReferencePlugin } from './dll-plugin'
 
 export default (webpackChain: WebpackChain, opts: Options) => {
   const {
@@ -48,5 +49,9 @@ export default (webpackChain: WebpackChain, opts: Options) => {
   // 打包时间分析
   if (process.env.BUILD_TIME_ANALYZER === 'open') {
     resolveSpeedMeasureWebpackPlugin(webpackChain)
+  }
+
+  if (process.env.DLL && dllDirExist()) {
+    resolveDllReferencePlugin(webpackChain)
   }
 }

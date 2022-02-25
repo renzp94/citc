@@ -1,12 +1,11 @@
 import type { Configuration } from 'webpack'
+import type WebpackChain from 'webpack-chain'
 import { gray, red } from 'kolorist'
 import Webpack from 'webpack'
-import { loadConfigFile } from './utils'
 import resolveProdConfig from './configs/production'
 
-export default (configFile: string | undefined) => {
+export default (webpackChain: WebpackChain) => {
   console.log(gray(`⌛ 启动打包构建...`))
-  const webpackChain = loadConfigFile(configFile)
   // 合并打包配置
   resolveProdConfig(webpackChain)
   const configs: Configuration = webpackChain.toConfig()

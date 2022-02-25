@@ -4,7 +4,8 @@ import minimist from 'minimist'
 import pkg from '../package.json'
 import server from './server'
 import build from './build'
-import { loadEnv } from './utils'
+import { loadEnv, loadConfigFile } from './utils'
+import { buildDll } from './configs/common/plugins/dll-plugin'
 
 const run = async () => {
   try {
@@ -25,12 +26,18 @@ const run = async () => {
     process.env.SIZE_ANALYZER = argv['build-size-analyzer'] ? 'open' : 'close'
     // 是否开启打包时间分析
     process.env.BUILD_TIME_ANALYZER = argv['build-time-analyzer'] ? 'open' : 'close'
+    // 使用DLL生成的依赖包
+    process.env.DLL = argv['dll'] ?? ''
 
     // 加载.env.*
     loadEnv(process.env.NODE_ENV)
     // 加载.env
     loadEnv()
-    run(argv?.config)
+    const webpackChain = loadConfigFile(argv?.config)
+    if (process.env.DLL) {
+      await buildDll(process.env.DLL.split(','))
+    }
+    run(webpackChain)
   } catch (cancelled) {
     console.log(cancelled.message)
     process.exit(1)

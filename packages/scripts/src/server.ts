@@ -1,13 +1,12 @@
 import type { Configuration } from 'webpack'
+import type WebpackChain from 'webpack-chain'
 import { gray, red } from 'kolorist'
 import Webpack from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
-import { loadConfigFile } from './utils'
 import resolveDevConfig from './configs/develop'
 
-export default async (configFile: string | undefined) => {
+export default async (webpackChain: WebpackChain) => {
   console.log(gray(`⌛ 正在启动开发服务...`))
-  const webpackChain = loadConfigFile(configFile)
   // 合并开发环境配置
   await resolveDevConfig(webpackChain)
   const configs: Configuration = webpackChain.toConfig()
