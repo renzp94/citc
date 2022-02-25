@@ -68,6 +68,24 @@ const applyCommonLoader = (
   return rule
 }
 /**
+ * 应用预处理的loader
+ * @param rule rule实例
+ * @param loader 预处理的loader
+ * @param options loader参数
+ */
+const applyPreCssLoader = (
+  rule: WebpackChain.Rule<WebpackChain.Rule<WebpackChain.Module>>,
+  loader: string,
+  options?: boolean | AnyObject
+) => {
+  if (loader) {
+    rule
+      .use(loader)
+      .loader(requireResolve(loader))
+      .options(typeof options === 'boolean' ? undefined : options)
+  }
+}
+/**
  * 创建css规则
  * @param baseRule rule实例
  * @param lang css语言
@@ -92,18 +110,14 @@ export const createCssRule = (
   }
   const [cssTest, cssModuleTest] = regexps[lang]
   const loader = loaders[lang]
-  let rule = baseRule.oneOf(lang).test(cssTest).exclude.add(cssModuleTest).end()
+  const rule = baseRule.oneOf(lang).test(cssTest).exclude.add(cssModuleTest).end()
   applyCommonLoader(rule, atomCss)
+  applyPreCssLoader(rule, loader, options)
 
   if (cssModule) {
     const moduleRule = baseRule.oneOf(`${lang}-module`).test(cssModuleTest)
-    rule = applyCommonLoader(moduleRule, atomCss, true)
-    if (loader) {
-      rule
-        .use(loader)
-        .loader(requireResolve(loader))
-        .options(typeof options === 'boolean' ? undefined : options)
-    }
+    applyCommonLoader(moduleRule, atomCss, true)
+    applyPreCssLoader(moduleRule, loader, options)
   }
 }
 
