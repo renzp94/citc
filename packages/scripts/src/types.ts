@@ -65,6 +65,8 @@ export interface Options {
   less: boolean | AnyObject
   /** sass配置 */
   sass: boolean | AnyObject
+  // 配置构建DLL的依赖
+  dll: string | Array<string>
 }
 
 export interface ResolveJtsLoaderOptions {
