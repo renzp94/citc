@@ -34,9 +34,14 @@ const applyCommonLoader = (
     ],
   ]
 
+  if (!atomCss) {
+    postcssPlugins.push(requireResolve('postcss-normalize'))
+  }
+
   if (atomCss === 'tailwindcss') {
     postcssPlugins.unshift('tailwindcss')
   }
+  console.log(postcssPlugins)
 
   rule
     .use('css-loader')
