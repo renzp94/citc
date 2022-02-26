@@ -1,7 +1,7 @@
 import type WebpackChain from 'webpack-chain'
 import { requireResolve } from '../../utils'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
-import { AnyObject, AtomCss, Options } from '../../types'
+import { AnyObject, AtomCss, CssModuleOptions, Options } from '../../types'
 
 /**
  * 应用公共css loader
@@ -13,7 +13,7 @@ import { AnyObject, AtomCss, Options } from '../../types'
 const applyCommonLoader = (
   rule: WebpackChain.Rule<WebpackChain.Rule<WebpackChain.Module>>,
   atomCss: AtomCss,
-  cssModule?: boolean
+  cssModule?: boolean | CssModuleOptions
 ) => {
   if (process.env.NODE_ENV === 'development') {
     rule.use('style-loader').loader(requireResolve('style-loader'))
@@ -41,7 +41,6 @@ const applyCommonLoader = (
   if (atomCss === 'tailwindcss') {
     postcssPlugins.unshift('tailwindcss')
   }
-  console.log(postcssPlugins)
 
   rule
     .use('css-loader')
@@ -52,6 +51,8 @@ const applyCommonLoader = (
             modules: {
               auto: true,
               localIdentName: '[local]--[hash:base64:10]',
+              exportLocalsConvention: 'camelCaseOnly',
+              ...(typeof cssModule === 'boolean' ? {} : cssModule),
             },
           }
         : {
@@ -100,7 +101,7 @@ const applyPreCssLoader = (
 export const createCssRule = (
   baseRule: WebpackChain.Rule<WebpackChain.Module>,
   lang: string,
-  cssModule: boolean,
+  cssModule: boolean | CssModuleOptions,
   atomCss: AtomCss,
   options?: boolean | AnyObject
 ) => {
@@ -121,7 +122,7 @@ export const createCssRule = (
 
   if (cssModule) {
     const moduleRule = baseRule.oneOf(`${lang}-module`).test(cssModuleTest)
-    applyCommonLoader(moduleRule, atomCss, true)
+    applyCommonLoader(moduleRule, atomCss, cssModule)
     applyPreCssLoader(moduleRule, loader, options)
   }
 }

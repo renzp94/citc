@@ -37,6 +37,15 @@ export interface JtsLoader {
 
 export type AtomCss = 'windicss' | 'tailwindcss'
 
+export interface CssModuleOptions {
+  mode: 'local' | 'global' | 'pure' | 'icss'
+  auto: boolean | RegExp
+  exportGlobals: boolean
+  localIdentName: string
+  namedExport: boolean
+  exportLocalsConvention: 'asIs' | 'camelCase' | 'camelCaseOnly' | 'dashes' | 'dashesOnly'
+}
+
 export interface Options {
   /** 打包入口配置 */
   entry: string | Array<string> | AnyObject
@@ -54,7 +63,7 @@ export interface Options {
   atomCss: AtomCss
   tailwindcss?: boolean
   /** 是否使用css module */
-  cssModule?: boolean
+  cssModule?: boolean | CssModuleOptions
   // eslint-disable-next-line no-unused-vars
   webpackChain?: (webpackChain: WebpackChain) => void
   /** 是否在控制台打印打包信息，详情见https://www.npmjs.com/package/@renzp/build-info-webpack-plugin */
