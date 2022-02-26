@@ -1,6 +1,6 @@
 {
   "name": "@renzp/create-app",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "用于创建 React 项目的脚手架",
   "keywords": [
     "cli",
@@ -21,15 +21,17 @@
   },
   "homepage": "https://github.com/renzp94/citc#readme",
   "files": [
-    "bin",
-    "template"
+    "bin/index.js",
+    "template",
+    "index.d.ts"
   ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
   "scripts": {
     "dev": "tsup --watch src",
-    "build": "tsup"
+    "build": "tsup",
+    "pub": "npm run build && zx ../../zx/mv-dts.zx.mjs && npm publish"
   },
   "devDependencies": {
     "@types/prompts": "^2.0.14",

@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { CssPreprocessor, PromptsResult } from './types'
+import { PromptsResult } from './types'
 import { appendFileContent, deepMerge, sortDependencies } from './utils'
 
 const templateRoot = path.resolve(__dirname, '../template')
@@ -195,7 +195,7 @@ export const renderCitcConfig = (result: PromptsResult) => {
 
   fs.writeFileSync(
     path.resolve(process.env.ROOT, 'citc.config.js'),
-    `/** @type {import('@renzp/scripts/bin').Options} */\n` +
+    `/** @type {import('@renzp/scripts').Options} */\n` +
       'module.exports = {\n' +
       `  typescript: ${typescript},\n` +
       `  cssModule: ${cssModule},\n` +
@@ -253,23 +253,6 @@ export const renderGitignore = () => {
     path.resolve(process.env.ROOT, '.gitignore'),
     'node_modules\n*.log\n.vscode\ndist\n'
   )
-}
-/**
- * 追加css预处理器css module类型
- * @param cssPreprocessor css与处理器
- */
-export const appendCssPreprocessorModuleType = (cssPreprocessor: CssPreprocessor) => {
-  const file = path.resolve(process.env.ROOT, '@types/css-module.d.ts')
-  const content =
-    `declare module '*.module.${cssPreprocessor === 'sass' ? 'scss' : cssPreprocessor}' {\n` +
-    '  interface Classes {\n' +
-    '    [key: string]: string\n' +
-    '  }\n' +
-    '  const classes: Classes\n' +
-    '  export default classes\n' +
-    '}\n'
-
-  appendFileContent(file, content)
 }
 /**
  * 渲染css原子化框架内容

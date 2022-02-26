@@ -9,7 +9,6 @@ import {
   renderPackage,
   renderReadme,
   renderGitignore,
-  appendCssPreprocessorModuleType,
   renderAtomCss,
   renderAtomCssConfigFile,
 } from './render'
@@ -17,16 +16,7 @@ import { gray, green, bold } from 'kolorist'
 
 export const createProject = async (result: PromptsResult) => {
   // eslint-disable-next-line no-unused-vars
-  const {
-    projectName,
-    overwrite,
-    typescript,
-    atomCss,
-    eslint,
-    stylelint,
-    cssModule,
-    cssPreprocessor,
-  } = result
+  const { projectName, overwrite, typescript, atomCss, eslint, stylelint } = result
   const root = process.env.ROOT
 
   if (overwrite) {
@@ -52,14 +42,6 @@ export const createProject = async (result: PromptsResult) => {
   }
   if (stylelint) {
     copyTemplateFile('.stylelintrc', 'lint')
-  }
-  if (typescript) {
-    copyTemplateFile('fonts.d.ts', '@types', '@types')
-    copyTemplateFile('images.d.ts', '@types', '@types')
-    if (cssModule) {
-      copyTemplateFile('css-module.d.ts', '@types', '@types')
-      cssPreprocessor && appendCssPreprocessorModuleType(cssPreprocessor)
-    }
   }
   if (eslint || stylelint) {
     renderHuskyAndLintstagedrc(typescript, eslint, stylelint)
