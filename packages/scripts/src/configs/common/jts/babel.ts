@@ -70,6 +70,8 @@ export default (webpackChain: WebpackChain, typescript: boolean, jtsLoader: JtsL
             requireResolve('@babel/plugin-proposal-object-rest-spread'),
             requireResolve('@babel/plugin-syntax-dynamic-import'),
             requireResolve('babel-plugin-transform-react-remove-prop-types'),
+            [requireResolve('@babel/plugin-proposal-private-methods'), { loose: true }],
+            [requireResolve('@babel/plugin-proposal-private-property-in-object'), { loose: true }],
           ],
         },
         userLoaderOptions
