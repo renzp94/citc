@@ -14,7 +14,6 @@ export default (webpackChain: WebpackChain, opts: Options) => {
       cacheDirectory: pathResolve(process.cwd(), 'node_modules/.cache'),
       store: 'pack',
       buildDependencies: {
-        defaultWebpack: ['webpack/lib/'],
         config: [__filename],
         tsconfig: [
           pathResolve(process.cwd(), 'tsconfig.json'),
