@@ -17,5 +17,7 @@ export default async (webpackChain: WebpackChain) => {
   })
   const devServerOptions = { ...(configs.devServer ?? {}) }
   const server = new WebpackDevServer(devServerOptions, compiler)
+  const signals = ['SIGINT', 'SIGTERM']
+  signals.forEach((signal) => process.on(signal, () => server.stopCallback(() => process.exit(0))))
   server.start()
 }
