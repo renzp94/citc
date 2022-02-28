@@ -76,8 +76,6 @@ export interface Options {
   sass: boolean | AnyObject
   // 配置构建DLL的依赖
   dll: string | Array<string>
-  // 是否使用eslint
-  eslint?: boolean
 }
 
 export interface ResolveJtsLoaderOptions {

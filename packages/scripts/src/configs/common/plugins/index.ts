@@ -13,6 +13,7 @@ import resolveBuildInfoWebpackPlugin from './build-info-webpack-plugin'
 import resolveWebpackBundleAnalyzer from './webpack-bundle-analyzer'
 import resolveSpeedMeasureWebpackPlugin from './speed-measure-webpack-plugin'
 import { dllDirExist, resolveDllReferencePlugin } from './dll-plugin'
+import fs from 'fs'
 
 export default (webpackChain: WebpackChain, opts: Options) => {
   const {
@@ -22,11 +23,13 @@ export default (webpackChain: WebpackChain, opts: Options) => {
     staticDir = 'static',
     template = 'index.html',
     webpackBuildInfo,
-    eslint = true,
   } = opts ?? {}
   const fileType = typescript ? 'ts' : 'js'
   const cwd = process.cwd()
   const extensions = typescript ? ['.ts', '.tsx', '.js', '.jsx'] : ['.js', '.jsx']
+
+  const files = fs.readdirSync(process.cwd())
+  const eslint = files.some((fileName: string) => fileName.includes('.eslintrc'))
 
   resolveDefinePlugin(webpackChain)
   resolveHtmlWebpackPlugin(webpackChain, { title, fileType, template })
