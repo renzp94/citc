@@ -22,6 +22,7 @@ export default (webpackChain: WebpackChain, opts: Options) => {
     staticDir = 'static',
     template = 'index.html',
     webpackBuildInfo,
+    eslint,
   } = opts ?? {}
   const fileType = typescript ? 'ts' : 'js'
   const cwd = process.cwd()
@@ -31,12 +32,14 @@ export default (webpackChain: WebpackChain, opts: Options) => {
   resolveHtmlWebpackPlugin(webpackChain, { title, fileType, template })
   resolveMiniCssExtractPlugin(webpackChain)
   resolveProgressWebpackPlugin(webpackChain)
-  resolveEslintWebpackPlugin(webpackChain, { cwd, extensions })
   resolveCopyWebpackPlugin(webpackChain, pathResolve(cwd, staticDir))
+  if (eslint) {
+    resolveEslintWebpackPlugin(webpackChain, { cwd, extensions })
+  }
   if (atomCss === 'windicss') {
     resolveWindicssWebpackPlugin(webpackChain)
   }
-  if (typescript) {
+  if (typescript && eslint) {
     resolveForkTsCheckerWebpackPlugin(webpackChain, extensions.toString().replace(/\./g, ''))
   }
   if (webpackBuildInfo) {
