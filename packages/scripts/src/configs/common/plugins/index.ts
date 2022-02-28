@@ -22,7 +22,7 @@ export default (webpackChain: WebpackChain, opts: Options) => {
     staticDir = 'static',
     template = 'index.html',
     webpackBuildInfo,
-    eslint,
+    eslint = true,
   } = opts ?? {}
   const fileType = typescript ? 'ts' : 'js'
   const cwd = process.cwd()
