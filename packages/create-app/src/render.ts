@@ -210,23 +210,24 @@ export const renderCitcConfig = (result: PromptsResult) => {
  * @param {boolean} eslint 是否使用eslint
  * @param {boolean} stylelint 是否使用stylelint
  */
-export const renderHuskyAndLintstagedrc = (
-  typescript: boolean,
-  eslint: boolean,
-  stylelint: boolean
-) => {
+export const renderHuskyAndLintstagedrc = (result: PromptsResult) => {
+  const { typescript, eslint, stylelint, cssPreprocessor } = result
   // 渲染.husky
   const templateDir = path.resolve(templateRoot, '.husky')
   renderTemplate(templateDir, `${process.env.ROOT}/.husky`)
   // 渲染.lintstagedrc
   const fileType = typescript ? 'ts' : 'js'
+  let cssPrefix = 'css'
+  if (cssPreprocessor) {
+    cssPrefix = cssPreprocessor === 'less' ? cssPreprocessor : '{scss,sass}'
+  }
   fs.writeFileSync(
     path.resolve(process.env.ROOT, `.lintstagedrc.js`),
     'module.exports = {\n' +
       (eslint
         ? `  'src/**/*.{${fileType},${fileType}x,json,html}': ['eslint', 'prettier --write'],\n`
         : '') +
-      (stylelint ? `  'src/**/*.{css}': ['stylelint --fix']\n` : '') +
+      (stylelint ? `  'src/**/*.${cssPrefix}': ['stylelint --fix']\n` : '') +
       '}\n'
   )
 }

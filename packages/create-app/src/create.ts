@@ -44,9 +44,7 @@ export const createProject = async (result: PromptsResult) => {
     copyTemplateFile('.stylelintrc', 'lint')
   }
   if (eslint || stylelint) {
-    renderHuskyAndLintstagedrc(typescript, eslint, stylelint)
-    console.log(gray('初始化husky'))
-    run('npx husky install')
+    renderHuskyAndLintstagedrc(result)
   }
   console.log(gray('初始化git仓库'))
   await run('git init')
