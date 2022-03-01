@@ -5,6 +5,8 @@ import resolveCommonConfig from './configs/common'
 import WebpackChain from 'webpack-chain'
 import dotenv from 'dotenv'
 import dotenvExpand from 'dotenv-expand'
+import portfinder from 'portfinder'
+import address from 'address'
 
 /**
  * 判断文件是否存在
@@ -140,3 +142,16 @@ export const resolveClientEnv = () => {
  * @returns js | ts
  */
 export const getJtsFileType = (typescript: boolean) => (typescript ? 'ts' : 'js')
+
+/**
+ * 获取ip，host地址及port
+ * @param port 指定端口
+ * @returns 返回当前主机的ip，host，如果指定port被占用，则自动+1
+ */
+export const getNetwork = async (port = 8080) => {
+  port = await portfinder.getPortPromise({ port })
+  const local = address.ip('lo') ?? 'localhost'
+  const network = address.ip()
+
+  return { network, local, port }
+}
