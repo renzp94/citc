@@ -14,7 +14,7 @@ export default (webpackChain: WebpackChain, { cwd, extensions }) => {
       ),
       fix: true,
       cache: true,
-      cacheLocation: pathResolve(process.cwd(), 'node_modules/.cache/.eslintcache'),
+      cacheLocation: pathResolve(process.cwd(), 'node_modules/.cache/.eslint-cache'),
     },
   ])
 }
