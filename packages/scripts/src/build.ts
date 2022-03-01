@@ -25,13 +25,20 @@ export default (webpackChain: WebpackChain) => {
           .join('\n')
       }
       console.log(red(`🚨 打包构建失败\n${msg}`))
-    } else {
-      console.log(
-        stats.toString({
-          chunks: false, // 使构建过程更静默无输出
-          colors: true, // 在控制台展示颜色
-        })
-      )
+      return false
     }
+
+    console.log(
+      stats.toString({
+        chunks: false, // 使构建过程更静默无输出
+        colors: true, // 在控制台展示颜色
+      })
+    )
+
+    compiler.close((err) => {
+      if (err) {
+        console.log(err)
+      }
+    })
   })
 }
