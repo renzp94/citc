@@ -7,6 +7,7 @@ import dotenv from 'dotenv'
 import dotenvExpand from 'dotenv-expand'
 import portfinder from 'portfinder'
 import address from 'address'
+import { createHash } from 'crypto'
 
 /**
  * 判断文件是否存在
@@ -154,4 +155,10 @@ export const getNetwork = async (port = 8080) => {
   const network = address.ip()
 
   return { network, local, port }
+}
+
+export const createEnvironmentHash = (env) => {
+  const hash = createHash('md5')
+  hash.update(JSON.stringify(env))
+  return hash.digest('hex')
 }

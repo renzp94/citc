@@ -1,5 +1,4 @@
 import { red } from 'kolorist'
-import fs from 'fs'
 import type WebpackChain from 'webpack-chain'
 import type { AnyObject, Options } from '../../types'
 import { getJtsFileType, pathResolve } from '../../utils'
@@ -8,21 +7,8 @@ export default (webpackChain: WebpackChain, opts: Options) => {
   const { entry, output = 'dist', typescript } = opts
   const fileType = getJtsFileType(typescript)
 
-  webpackChain
-    .cache({
-      type: 'filesystem',
-      cacheDirectory: pathResolve(process.cwd(), 'node_modules/.cache'),
-      store: 'pack',
-      buildDependencies: {
-        config: [__filename],
-        tsconfig: [
-          pathResolve(process.cwd(), 'tsconfig.json'),
-          pathResolve(process.cwd(), 'jsconfig.json'),
-        ].filter((f) => fs.existsSync(f)),
-      },
-    })
-    // 配置环境
-    .mode(process.env.NODE_ENV as 'development' | 'production')
+  // 配置环境
+  webpackChain.mode(process.env.NODE_ENV as 'development' | 'production')
 
   // 配置入口文件
   if (entry) {
