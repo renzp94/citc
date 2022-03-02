@@ -12,6 +12,7 @@ export interface CommandValues {
   isLessFlagUsed?: boolean
   isSassFlagUsed?: boolean
   jtsLoader?: JtsLoaderName
+  isCommitlint?: boolean
 }
 
 export type CssPreprocessor = 'less' | 'sass'
@@ -29,4 +30,5 @@ export interface PromptsResult {
   cssModule?: boolean
   cssPreprocessor?: CssPreprocessor
   jtsLoader?: JtsLoaderName
+  commitlint?: boolean
 }

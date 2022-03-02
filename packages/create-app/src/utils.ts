@@ -44,7 +44,7 @@ export const postOrderDirectoryTraverse = (dir, dirCallback, fileCallback) => {
   }
 }
 
-export const emptyDir = (dir: string) => {
+export const clearDir = (dir: string) => {
   postOrderDirectoryTraverse(
     dir,
     (dir) => fs.rmdirSync(dir),

@@ -31,6 +31,8 @@ const getCommandValues = (): CommandValues => {
     console.log(red(`🚨 css取值只能为${atomCssFrameworks.join('/')}，当前值为${argv.css}`))
     process.exit(-1)
   }
+  // 是否使用commit lint
+  const isCommitlint = typeof argv.commitlint === 'boolean'
 
   return {
     argv,
@@ -45,6 +47,7 @@ const getCommandValues = (): CommandValues => {
     isLessFlagUsed,
     isSassFlagUsed,
     jtsLoader,
+    isCommitlint,
   }
 }
 

@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { PromptsResult } from './types'
-import { appendFileContent, deepMerge, sortDependencies } from './utils'
+import { appendFileContent, deepMerge, run, sortDependencies } from './utils'
 
 const templateRoot = path.resolve(__dirname, '../template')
 
@@ -15,8 +15,13 @@ export const renderPackage = ({
   stylelint,
   typescript,
   jtsLoader,
+  commitlint,
 }: PromptsResult) => {
-  const isLint = eslint || stylelint
+  const isLint = eslint || stylelint || commitlint
+  const commitlintPackage = {
+    '@commitlint/cli': '^16.2.1',
+    '@commitlint/config-conventional': '^16.2.1',
+  }
   const tsPackage = {
     '@typescript-eslint/eslint-plugin': '^5.8.0',
     '@typescript-eslint/parser': '^5.8.0',
@@ -53,6 +58,7 @@ export const renderPackage = ({
       build: 'citc-scripts build',
     },
     devDependencies: {
+      ...(commitlint ? commitlintPackage : {}),
       ...(jtsLoader === 'swc' ? swcPackage : {}),
       ...(eslint ? eslintPackage : {}),
       ...(isLint ? huskyPackage : {}),
@@ -211,25 +217,19 @@ export const renderCitcConfig = (result: PromptsResult) => {
  * @param {boolean} stylelint 是否使用stylelint
  */
 export const renderHuskyAndLintstagedrc = (result: PromptsResult) => {
-  const { typescript, eslint, stylelint, cssPreprocessor } = result
-  // 渲染.husky
-  const templateDir = path.resolve(templateRoot, '.husky')
-  renderTemplate(templateDir, `${process.env.ROOT}/.husky`)
-  // 渲染.lintstagedrc
-  const fileType = typescript ? 'ts' : 'js'
-  let cssPrefix = 'css'
-  if (cssPreprocessor) {
-    cssPrefix = cssPreprocessor === 'less' ? cssPreprocessor : '{scss,sass}'
+  const { eslint, stylelint, commitlint } = result
+  const huskySrc = path.resolve(templateRoot, '.husky')
+  const huskyRoot = path.resolve(process.env.ROOT, '.husky')
+  // 创建目录.husky
+  fs.mkdirSync(`${huskyRoot}/_`, { recursive: true })
+  fs.copyFileSync(`${huskySrc}/_/husky.sh`, `${huskyRoot}/_/husky.sh`)
+  if (eslint || stylelint) {
+    renderLintstagedrc(result)
+    fs.copyFileSync(`${huskySrc}/pre-commit`, `${huskyRoot}/pre-commit`)
   }
-  fs.writeFileSync(
-    path.resolve(process.env.ROOT, `.lintstagedrc.js`),
-    'module.exports = {\n' +
-      (eslint
-        ? `  'src/**/*.{${fileType},${fileType}x,json,html}': ['eslint', 'prettier --write'],\n`
-        : '') +
-      (stylelint ? `  'src/**/*.${cssPrefix}': ['stylelint --fix']\n` : '') +
-      '}\n'
-  )
+  if (commitlint) {
+    fs.copyFileSync(`${huskySrc}/commit-msg`, `${huskyRoot}/commit-msg`)
+  }
 }
 /**
  * 从模板中渲染文件到项目指定路径
@@ -261,23 +261,27 @@ export const renderGitignore = () => {
  * @param typescript 是否为ts
  * @param stylelint 是否使用stylelint
  */
-export const renderAtomCss = (atomCss: string, typescript: boolean, stylelint: boolean) => {
-  const fileType = typescript ? 'tsx' : 'jsx'
-  // 如果使用css原子化框剪，则追加样式导入代码
-  atomCss === 'tailwindcss' &&
-    fs.writeFileSync(
-      path.resolve(process.env.ROOT, 'src/main.css'),
-      (stylelint ? `/* stylelint-disable at-rule-no-unknown */\n` : '') +
-        '@tailwind base;\n' +
-        '@tailwind components;\n' +
-        '@tailwind utilities;\n'
-    )
+export const renderAtomCss = (result: PromptsResult) => {
+  const { typescript, atomCss, stylelint } = result
+  if (atomCss) {
+    const fileType = typescript ? 'tsx' : 'jsx'
+    // 如果使用css原子化框剪，则追加样式导入代码
+    atomCss === 'tailwindcss' &&
+      fs.writeFileSync(
+        path.resolve(process.env.ROOT, 'src/main.css'),
+        (stylelint ? `/* stylelint-disable at-rule-no-unknown */\n` : '') +
+          '@tailwind base;\n' +
+          '@tailwind components;\n' +
+          '@tailwind utilities;\n'
+      )
 
-  appendFileContent(
-    path.resolve(process.env.ROOT, `src/main.${fileType}`),
-    atomCss === 'windicss' ? `import 'windi.css'` : `import './main.css'`,
-    2
-  )
+    appendFileContent(
+      path.resolve(process.env.ROOT, `src/main.${fileType}`),
+      atomCss === 'windicss' ? `import 'windi.css'` : `import './main.css'`,
+      2
+    )
+    renderAtomCssConfigFile(atomCss, typescript)
+  }
 }
 /**
  * 渲染css原子化框架配置文件
@@ -297,4 +301,54 @@ export const renderAtomCssConfigFile = (atomCss: string, typescript: boolean) =>
         '}\n'
       : 'module.exports = {\n' + `  content: ['./src/**/*.${fileType}'],\n` + '}\n'
   fs.writeFileSync(path.resolve(process.env.ROOT, fileName), content)
+}
+/**
+ * 渲染.lintstagedrc
+ */
+export const renderLintstagedrc = (result: PromptsResult) => {
+  const { typescript, eslint, stylelint, cssPreprocessor } = result
+  const fileType = typescript ? 'ts' : 'js'
+  let cssPrefix = 'css'
+  if (cssPreprocessor) {
+    cssPrefix = cssPreprocessor === 'less' ? cssPreprocessor : '{scss,sass}'
+  }
+  fs.writeFileSync(
+    path.resolve(process.env.ROOT, `.lintstagedrc.js`),
+    'module.exports = {\n' +
+      (eslint
+        ? `  'src/**/*.{${fileType},${fileType}x,json,html}': ['eslint --fix', 'prettier --write'],\n`
+        : '') +
+      (stylelint ? `  'src/**/*.${cssPrefix}': ['stylelint --fix']\n` : '') +
+      '}\n'
+  )
+}
+/**
+ * 渲染lint
+ * @param result PromptsResult
+ */
+export const renderLint = (result: PromptsResult) => {
+  const { typescript, eslint, stylelint, commitlint } = result
+  if (eslint || stylelint || commitlint) {
+    renderHuskyAndLintstagedrc(result)
+    if (eslint) {
+      copyTemplateFile('.eslintrc.js', `lint/${typescript ? 'ts' : 'js'}`)
+      copyTemplateFile('.prettierrc', `lint`)
+    }
+    if (stylelint) {
+      copyTemplateFile('.stylelintrc', 'lint')
+    }
+    if (commitlint) {
+      copyTemplateFile('commitlint.config.js', `lint`)
+    }
+  }
+}
+/**
+ * 渲染git
+ */
+export const renderGitRepo = async () => {
+  await run('git init')
+  renderGitignore()
+  await run('git add .')
+  await run('git commit -m init')
+  appendFileContent(path.resolve(process.env.ROOT, `.git/config`), '    hooksPath = .husky', 7)
 }

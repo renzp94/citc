@@ -1,56 +1,39 @@
 import type { PromptsResult } from './types'
 import fs from 'fs'
-import { emptyDir, run } from './utils'
+import { clearDir } from './utils'
 import {
   render,
   renderCitcConfig,
-  copyTemplateFile,
-  renderHuskyAndLintstagedrc,
   renderPackage,
   renderReadme,
-  renderGitignore,
   renderAtomCss,
-  renderAtomCssConfigFile,
+  renderLint,
+  renderGitRepo,
 } from './render'
 import { gray, green, bold } from 'kolorist'
 
 export const createProject = async (result: PromptsResult) => {
-  // eslint-disable-next-line no-unused-vars
-  const { projectName, overwrite, typescript, atomCss, eslint, stylelint } = result
-  const root = process.env.ROOT
+  const { projectName, overwrite, typescript } = result
+  const { ROOT } = process.env
 
   if (overwrite) {
-    console.log(gray(`⌛ 正在清空${root}目录...`))
-    emptyDir(root)
-  } else if (!fs.existsSync(root)) {
-    fs.mkdirSync(root)
+    console.log(gray(`⌛ 正在清除${ROOT}目录...`))
+    clearDir(ROOT)
   }
-  console.log(gray(`⌛ 正在${root}目录中创建项目...`))
+  console.log(gray(`⌛ 正在${ROOT}目录中创建${projectName}项目...`))
+  if (!fs.existsSync(ROOT)) {
+    fs.mkdirSync(ROOT)
+  }
   renderPackage(result)
   render('base', typescript)
-  renderReadme(result)
-  renderCitcConfig(result)
-  if (atomCss) {
-    renderAtomCss(atomCss, typescript, stylelint)
-    renderAtomCssConfigFile(atomCss, typescript)
-  }
   const typeDir = typescript ? 'react-ts' : 'react'
   typescript && render(typeDir)
-  if (eslint) {
-    copyTemplateFile('.eslintrc.js', `lint/${typescript ? 'ts' : 'js'}`)
-    copyTemplateFile('.prettierrc', `lint`)
-  }
-  if (stylelint) {
-    copyTemplateFile('.stylelintrc', 'lint')
-  }
-  if (eslint || stylelint) {
-    renderHuskyAndLintstagedrc(result)
-  }
-  console.log(gray('初始化git仓库'))
-  await run('git init')
-  renderGitignore()
-  await run('git add .')
-  await run('git commit -m init')
+  renderReadme(result)
+  renderCitcConfig(result)
+  renderAtomCss(result)
+  renderLint(result)
+  console.log(gray('⌛ 正在初始化git仓库'))
+  await renderGitRepo()
 
   console.log(
     green(

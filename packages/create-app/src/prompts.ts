@@ -17,6 +17,7 @@ const getPrompts = async ({
   isLessFlagUsed,
   isSassFlagUsed,
   jtsLoader,
+  isCommitlint,
 }: CommandValues) => {
   let targetDir = defaultDir
 
@@ -40,6 +41,7 @@ const getPrompts = async ({
     cssModule: isCssModuleFlagUsed,
     cssPreprocessor,
     jtsLoader: jtsLoader,
+    commitlint: isCommitlint,
   }
 
   const promptValues = await prompts(
@@ -137,6 +139,14 @@ const getPrompts = async ({
         name: 'stylelint',
         type: () => (isStylelintFlagUsed ? null : 'toggle'),
         message: yellow('是否使用Stylelint ?'),
+        initial: true,
+        active: '是',
+        inactive: '否',
+      },
+      {
+        name: 'commitlint',
+        type: () => (isCommitlint ? null : 'toggle'),
+        message: yellow('是否使用Commitlint ?'),
         initial: true,
         active: '是',
         inactive: '否',
