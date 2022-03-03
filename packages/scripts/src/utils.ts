@@ -73,8 +73,9 @@ export const loadConfigFile = (configFilPath: string | undefined) => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const userConfigs = require(filePath)
     if (typeof userConfigs === 'object') {
-      const { webpackChain: resolveUserWebpackConfig, dll } = userConfigs
+      const { webpackChain: resolveUserWebpackConfig, dll, publicDir = 'public' } = userConfigs
       process.env.DLL = dll ?? ''
+      process.env.PUBLIC = publicDir
       webpackChain = resolveCommonConfig(userConfigs)
       resolveUserWebpackConfig?.(webpackChain)
       // 如果是一个函数则默认为webpackChain配置
@@ -132,6 +133,8 @@ export const resolveClientEnv = () => {
   for (const key in env) {
     env[key] = JSON.stringify(env[key])
   }
+
+  env['PUBLIC'] = JSON.stringify(process.env.PUBLIC)
 
   return {
     'process.env': env,

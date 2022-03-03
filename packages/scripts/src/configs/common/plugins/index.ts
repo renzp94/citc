@@ -16,14 +16,7 @@ import { dllDirExist, resolveDllReferencePlugin } from './dll-plugin'
 import fs from 'fs'
 
 export default (webpackChain: WebpackChain, opts: Options) => {
-  const {
-    title,
-    typescript,
-    atomCss,
-    staticDir = 'static',
-    template = 'index.html',
-    webpackBuildInfo,
-  } = opts ?? {}
+  const { typescript, atomCss, html, webpackBuildInfo } = opts ?? {}
   const fileType = typescript ? 'ts' : 'js'
   const cwd = process.cwd()
   const extensions = typescript ? ['.ts', '.tsx', '.js', '.jsx'] : ['.js', '.jsx']
@@ -32,10 +25,10 @@ export default (webpackChain: WebpackChain, opts: Options) => {
   const eslint = files.some((fileName: string) => fileName.includes('.eslintrc'))
 
   resolveDefinePlugin(webpackChain)
-  resolveHtmlWebpackPlugin(webpackChain, { title, fileType, template })
+  resolveHtmlWebpackPlugin(webpackChain, { fileType, html })
   resolveMiniCssExtractPlugin(webpackChain)
   resolveProgressWebpackPlugin(webpackChain)
-  resolveCopyWebpackPlugin(webpackChain, pathResolve(cwd, staticDir))
+  resolveCopyWebpackPlugin(webpackChain, pathResolve(cwd, process.env.PUBLIC))
   if (eslint) {
     resolveEslintWebpackPlugin(webpackChain, { cwd, extensions })
   }

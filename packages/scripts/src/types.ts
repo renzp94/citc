@@ -1,5 +1,6 @@
 import type WebpackChain from 'webpack-chain'
 import type { Options as BuildInfoWebpackPluginOptions } from '@renzp/build-info-webpack-plugin'
+import type { Options as HtmlOptions } from 'html-webpack-plugin'
 export type JtsLoaderName = 'babel' | 'esbuild' | 'swc'
 
 export interface AnyObject {
@@ -52,11 +53,9 @@ export interface Options {
   /** 打包输出配置 */
   output?: string
   /** 静态文件目录配置 */
-  staticDir?: string
-  /** html的title配置 */
-  title?: string
-  /** index.html目录配置 */
-  template?: string
+  publicDir?: string
+  /** html配置，template默认为index.html,favicon默认为favicon.ico，其他参数详情参考：html-webpack-plugin配置 */
+  html?: HtmlOptions
   /** 是否使用typescript */
   typescript?: boolean
   /** 原子化框架 */
