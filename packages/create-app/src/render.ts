@@ -18,10 +18,27 @@ export const renderPackage = ({
   commitlint,
 }: PromptsResult) => {
   const isLint = eslint || stylelint || commitlint
+  const commitScripts = {
+    cz: 'git-cz',
+  }
   const commitlintPackage = {
     '@commitlint/cli': '^16.2.1',
     '@commitlint/config-conventional': '^16.2.1',
+    'commitlint-config-cz': '^0.13.3',
+    'cz-customizable': '^6.3.0',
+    commitizen: '^4.2.4',
   }
+  const commitizenConfig = {
+    config: {
+      commitizen: {
+        path: 'node_modules/cz-customizable',
+      },
+      'cz-customizable': {
+        config: 'cz.config.js',
+      },
+    },
+  }
+
   const tsPackage = {
     '@typescript-eslint/eslint-plugin': '^5.8.0',
     '@typescript-eslint/parser': '^5.8.0',
@@ -56,6 +73,7 @@ export const renderPackage = ({
     scripts: {
       dev: 'citc-scripts start',
       build: 'citc-scripts build',
+      ...(commitlint ? commitScripts : {}),
     },
     devDependencies: {
       ...(commitlint ? commitlintPackage : {}),
@@ -64,6 +82,7 @@ export const renderPackage = ({
       ...(isLint ? huskyPackage : {}),
       ...(stylelint ? stylelintPackage : {}),
     },
+    ...(commitlint ? commitizenConfig : {}),
   }
   fs.writeFileSync(path.resolve(process.env.ROOT, 'package.json'), JSON.stringify(pkg, null, 2))
 }
@@ -339,6 +358,7 @@ export const renderLint = (result: PromptsResult) => {
     }
     if (commitlint) {
       copyTemplateFile('commitlint.config.js', `lint`)
+      copyTemplateFile('cz.config.js', `lint`)
     }
   }
 }
