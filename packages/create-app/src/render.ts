@@ -20,6 +20,7 @@ export const renderPackage = ({
   const isLint = eslint || stylelint || commitlint
   const commitScripts = {
     cz: 'git-cz',
+    release: 'standard-version',
   }
   const commitlintPackage = {
     '@commitlint/cli': '^16.2.1',
@@ -27,6 +28,7 @@ export const renderPackage = ({
     'commitlint-config-cz': '^0.13.3',
     'cz-customizable': '^6.3.0',
     commitizen: '^4.2.4',
+    'standard-version': '^9.3.2',
   }
   const commitizenConfig = {
     config: {
@@ -359,6 +361,7 @@ export const renderLint = (result: PromptsResult) => {
     if (commitlint) {
       copyTemplateFile('commitlint.config.js', `lint`)
       copyTemplateFile('cz.config.js', `lint`)
+      copyTemplateFile('.versionrc', `lint`)
     }
   }
 }
