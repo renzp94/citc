@@ -6,7 +6,7 @@ export default (
   webpackChain: WebpackChain,
   { fileType, html }: { fileType: string; html: Options }
 ) => {
-  const { title, template = 'index.html', favicon = 'favicon.ico' } = html
+  const { title, template = 'index.html', favicon = 'favicon.ico' } = html ?? {}
   webpackChain
     .plugin('html-webpack-plugin')
     .use(HtmlWebpackPlugin, [
