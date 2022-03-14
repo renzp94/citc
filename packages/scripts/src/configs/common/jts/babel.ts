@@ -47,8 +47,26 @@ export default (webpackChain: WebpackChain, typescript: boolean, jtsLoader: JtsL
     ),
   ]
 
+  const babelOptions = _merge(
+    {
+      cacheDirectory: true,
+      presets,
+      plugins: [
+        transformRuntime,
+        [requireResolve('@babel/plugin-proposal-decorators'), { legacy: true }],
+        [requireResolve('@babel/plugin-proposal-class-properties'), { loose: true }],
+        requireResolve('@babel/plugin-proposal-object-rest-spread'),
+        requireResolve('@babel/plugin-syntax-dynamic-import'),
+        requireResolve('babel-plugin-transform-react-remove-prop-types'),
+        [requireResolve('@babel/plugin-proposal-private-methods'), { loose: true }],
+        [requireResolve('@babel/plugin-proposal-private-property-in-object'), { loose: true }],
+      ],
+    },
+    userLoaderOptions
+  )
+
   // 配置babel
-  webpackChain.module
+  const rule = webpackChain.module
     .rule('babel')
     .test(new RegExp(`\\.(${fileType}|${fileType}x)$`, 'i'))
     .exclude.add(/node_modules/)
@@ -58,23 +76,8 @@ export default (webpackChain: WebpackChain, typescript: boolean, jtsLoader: JtsL
     .end()
     .use('babel')
     .loader(requireResolve('babel-loader'))
-    .options(
-      _merge(
-        {
-          cacheDirectory: true,
-          presets,
-          plugins: [
-            transformRuntime,
-            [requireResolve('@babel/plugin-proposal-decorators'), { legacy: true }],
-            [requireResolve('@babel/plugin-proposal-class-properties'), { loose: true }],
-            requireResolve('@babel/plugin-proposal-object-rest-spread'),
-            requireResolve('@babel/plugin-syntax-dynamic-import'),
-            requireResolve('babel-plugin-transform-react-remove-prop-types'),
-            [requireResolve('@babel/plugin-proposal-private-methods'), { loose: true }],
-            [requireResolve('@babel/plugin-proposal-private-property-in-object'), { loose: true }],
-          ],
-        },
-        userLoaderOptions
-      )
-    )
+    .options(babelOptions)
+    .end()
+
+  return rule
 }

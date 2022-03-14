@@ -68,17 +68,20 @@ export interface Options {
   /** 是否在控制台打印打包信息，详情见https://www.npmjs.com/package/@renzp/build-info-webpack-plugin */
   webpackBuildInfo?: boolean | BuildInfoWebpackPluginOptions
   /** Js/Ts文件打包配置 */
-  jtsLoader: JtsLoader
+  jtsLoader?: JtsLoader
   /** less配置 */
-  less: boolean | AnyObject
+  less?: boolean | AnyObject
   /** sass配置 */
-  sass: boolean | AnyObject
+  sass?: boolean | AnyObject
   // 配置构建DLL的依赖
-  dll: string | Array<string>
+  dll?: string | Array<string>
+  // 是否使用css scoped
+  cssScoped?: boolean
 }
 
 export interface ResolveJtsLoaderOptions {
   typescript?: boolean
   fileType?: string
-  jtsLoader: JtsLoader
+  jtsLoader?: JtsLoader
+  cssScoped?: boolean
 }

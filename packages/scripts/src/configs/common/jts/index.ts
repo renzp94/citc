@@ -1,5 +1,6 @@
 import type WebpackChain from 'webpack-chain'
 import type { ResolveJtsLoaderOptions } from '../../../types'
+import { requireResolve } from '../../../utils'
 import resolveBabel from './babel'
 import resolveEsbuild from './esbuild'
 import resolveSwc from './swc'
@@ -12,7 +13,7 @@ const resolves = {
 }
 
 export default (webpackChain: WebpackChain, opts: ResolveJtsLoaderOptions) => {
-  const { typescript, jtsLoader } = opts
+  const { typescript, jtsLoader, cssScoped } = opts
 
   const { loader = 'babel' } = jtsLoader ?? {}
 
@@ -22,5 +23,9 @@ export default (webpackChain: WebpackChain, opts: ResolveJtsLoaderOptions) => {
       ? resolveBabel
       : resolves[loader]
 
-  resolve(webpackChain, typescript, jtsLoader)
+  const rule = resolve(webpackChain, typescript, jtsLoader)
+
+  if (cssScoped) {
+    rule.use('jsx-scoped-loader').loader(requireResolve('@renzp/jsx-scoped-loader')).end()
+  }
 }

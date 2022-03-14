@@ -13,7 +13,8 @@ import { AnyObject, AtomCss, CssModuleOptions, Options } from '../../types'
 const applyCommonLoader = (
   rule: WebpackChain.Rule<WebpackChain.Rule<WebpackChain.Module>>,
   atomCss: AtomCss,
-  cssModule?: boolean | CssModuleOptions
+  cssModule?: boolean | CssModuleOptions,
+  cssScoped?: boolean
 ) => {
   if (process.env.NODE_ENV === 'development') {
     rule.use('style-loader').loader(requireResolve('style-loader'))
@@ -71,6 +72,10 @@ const applyCommonLoader = (
     })
     .end()
 
+  if (cssScoped) {
+    rule.use('css-scoped-loader').loader(requireResolve('@renzp/css-scoped-loader')).end()
+  }
+
   return rule
 }
 /**
@@ -103,20 +108,26 @@ export const createCssRule = (
   lang: string,
   cssModule: boolean | CssModuleOptions,
   atomCss: AtomCss,
+  cssScoped: boolean,
   options?: boolean | AnyObject
 ) => {
   const regexps = {
-    css: [/\.css$/, /\.module\.css$/],
-    less: [/\.less$/, /\.module\.less$/],
-    sass: [/\.(scss|sass)$/, /\.module\.(scss|sass)$/],
+    css: [/\.css$/, /\.module\.css$/, /\.scoped\.css$/],
+    less: [/\.less$/, /\.module\.less$/, /\.scoped\.less$/],
+    sass: [/\.(scss|sass)$/, /\.module\.(scss|sass)$/, /\.scoped\.(scss|sass)$/],
   }
   const loaders = {
     less: 'less-loader',
     sass: 'sass-loader',
   }
-  const [cssTest, cssModuleTest] = regexps[lang]
+  const [cssTest, cssModuleTest, cssScopedTest] = regexps[lang]
   const loader = loaders[lang]
-  const rule = baseRule.oneOf(lang).test(cssTest).exclude.add(cssModuleTest).end()
+  const rule = baseRule
+    .oneOf(lang)
+    .test(cssTest)
+    .exclude.add(cssModuleTest)
+    .add(cssScopedTest)
+    .end()
   applyCommonLoader(rule, atomCss)
   applyPreCssLoader(rule, loader, options)
 
@@ -125,16 +136,21 @@ export const createCssRule = (
     applyCommonLoader(moduleRule, atomCss, cssModule)
     applyPreCssLoader(moduleRule, loader, options)
   }
+  if (cssScoped) {
+    const moduleRule = baseRule.oneOf(`${lang}-scoped`).test(cssScopedTest)
+    applyCommonLoader(moduleRule, atomCss, cssModule, cssScoped)
+    applyPreCssLoader(moduleRule, loader, options)
+  }
 }
 
 export default (webpackChain: WebpackChain, opts: Options) => {
-  const { cssModule, less, sass, atomCss } = opts ?? {}
+  const { cssModule, less, sass, atomCss, cssScoped } = opts ?? {}
   const baseRule = webpackChain.module.rule('css')
-  createCssRule(baseRule, 'css', cssModule, atomCss)
+  createCssRule(baseRule, 'css', cssModule, atomCss, cssScoped)
   if (less) {
-    createCssRule(baseRule, 'less', cssModule, atomCss, less)
+    createCssRule(baseRule, 'less', cssModule, atomCss, cssScoped, less)
   }
   if (sass) {
-    createCssRule(baseRule, 'sass', cssModule, atomCss, sass)
+    createCssRule(baseRule, 'sass', cssModule, atomCss, cssScoped, sass)
   }
 }

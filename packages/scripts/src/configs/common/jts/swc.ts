@@ -8,7 +8,7 @@ export default (webpackChain: WebpackChain, typescript: boolean, jtsLoader: JtsL
   const syntax = typescript ? 'typescript' : 'ecmascript'
 
   // 配置swc-loader
-  webpackChain.module
+  const rule = webpackChain.module
     .rule('swc')
     .test(new RegExp(`\\.(${fileType}|${fileType}x)$`, 'i'))
     .exclude.add(/node_modules/)
@@ -39,4 +39,7 @@ export default (webpackChain: WebpackChain, typescript: boolean, jtsLoader: JtsL
         jtsLoader?.swc ?? {}
       )
     )
+    .end()
+
+  return rule
 }

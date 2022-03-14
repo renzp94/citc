@@ -10,7 +10,7 @@ import resolveMinimizer from './minimizer'
 import { fileExists, pathResolve } from '../../utils'
 
 export default (opts?: Options) => {
-  const { typescript, jtsLoader } = opts ?? {}
+  const { typescript, jtsLoader, cssScoped } = opts ?? {}
   opts.atomCss = fileExists(pathResolve(process.cwd(), 'windi.config.js')) ? 'windicss' : undefined
   if (!opts.atomCss) {
     opts.atomCss = fileExists(pathResolve(process.cwd(), 'tailwind.config.js'))
@@ -21,7 +21,7 @@ export default (opts?: Options) => {
   const webpackChain = new WebpackChain()
   resolveEntry(webpackChain, opts)
   resolveResolve(webpackChain, typescript)
-  resolveJts(webpackChain, { typescript, jtsLoader })
+  resolveJts(webpackChain, { typescript, jtsLoader, cssScoped })
   resolveCss(webpackChain, opts)
   resolveAssets(webpackChain)
   resolvePlugins(webpackChain, opts)
