@@ -25,7 +25,8 @@ export default async (webpackChain: WebpackChain) => {
       return false
     }
 
-    if (!isFirstCompile) {
+    if (isFirstCompile) {
+      isFirstCompile = false
       console.log(
         'App run at: \n',
         `- Local:    ${cyan(`http://${local}:${port}`)}\n`,
@@ -33,8 +34,6 @@ export default async (webpackChain: WebpackChain) => {
         'Note that the development build is not optimized.\n',
         `To create a production build, run ${cyan('yarn build')}.\n`
       )
-    } else {
-      isFirstCompile = false
     }
   })
 
