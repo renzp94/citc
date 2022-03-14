@@ -10,18 +10,15 @@ export default (webpackChain: WebpackChain, typescript: boolean, jtsLoader: JtsL
   const userLoaderOptions = jtsLoader?.babel?.loaderOptions ?? {}
   const userPresetEnvOptions = jtsLoader?.babel?.presetEnv ?? {}
   const presets = [
-    requireResolve(
-      '@babel/preset-env',
+    [
+      requireResolve('@babel/preset-env'),
       _merge(
         {
-          targets: 'es2015',
-          useBuiltIns: 'usage',
           corejs: 3,
-          loose: true,
         },
         userPresetEnvOptions
-      )
-    ),
+      ),
+    ],
     requireResolve('@babel/preset-react'),
   ]
   if (typescript) {
@@ -54,12 +51,12 @@ export default (webpackChain: WebpackChain, typescript: boolean, jtsLoader: JtsL
       plugins: [
         transformRuntime,
         [requireResolve('@babel/plugin-proposal-decorators'), { legacy: true }],
-        [requireResolve('@babel/plugin-proposal-class-properties'), { loose: true }],
+        requireResolve('@babel/plugin-proposal-class-properties'),
         requireResolve('@babel/plugin-proposal-object-rest-spread'),
         requireResolve('@babel/plugin-syntax-dynamic-import'),
         requireResolve('babel-plugin-transform-react-remove-prop-types'),
-        [requireResolve('@babel/plugin-proposal-private-methods'), { loose: true }],
-        [requireResolve('@babel/plugin-proposal-private-property-in-object'), { loose: true }],
+        requireResolve('@babel/plugin-proposal-private-methods'),
+        requireResolve('@babel/plugin-proposal-private-property-in-object'),
       ],
     },
     userLoaderOptions

@@ -1,6 +1,6 @@
 {
   "name": "@renzp/scripts",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "基于Webpack5的打包脚本",
   "keywords": [
     "webpack",
