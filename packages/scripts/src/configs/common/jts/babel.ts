@@ -14,7 +14,9 @@ export default (webpackChain: WebpackChain, typescript: boolean, jtsLoader: JtsL
       requireResolve('@babel/preset-env'),
       _merge(
         {
+          useBuiltIns: 'entry',
           corejs: 3,
+          exclude: ['transform-typeof-symbol'],
         },
         userPresetEnvOptions
       ),
