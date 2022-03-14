@@ -17,7 +17,6 @@ export default async (webpackChain: WebpackChain) => {
     console.log(red(msg.toString()))
     process.exit(1)
   })
-  let isFirstCompile = true
   const { network, local, port } = await getNetwork(webpackChain?.devServer?.get('port'))
   webpackChain?.devServer?.port?.(port)
   compiler.hooks.done.tap('citc-scripts start', (stats) => {
@@ -25,16 +24,13 @@ export default async (webpackChain: WebpackChain) => {
       return false
     }
 
-    if (isFirstCompile) {
-      isFirstCompile = false
-      console.log(
-        'App run at: \n',
-        `- Local:    ${cyan(`http://${local}:${port}`)}\n`,
-        `- Network:  ${cyan(`http://${network}:${port}`)}\n\n`,
-        'Note that the development build is not optimized.\n',
-        `To create a production build, run ${cyan('yarn build')}.\n`
-      )
-    }
+    console.log(
+      'App run at: \n',
+      `- Local:    ${cyan(`http://${local}:${port}`)}\n`,
+      `- Network:  ${cyan(`http://${network}:${port}`)}\n\n`,
+      'Note that the development build is not optimized.\n',
+      `To create a production build, run ${cyan('yarn build')}.\n`
+    )
   })
 
   const devServerOptions = { ...(configs.devServer ?? {}) }
