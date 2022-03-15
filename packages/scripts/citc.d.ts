@@ -39,7 +39,8 @@ declare module '*.otf'
 // images
 declare module '*.png'
 declare module '*.svg'
-declare module '*.svg'
 declare module '*.jpg'
 declare module '*.jpeg'
 declare module '*.gif'
+// 导入svg为React组件
+declare module '*.svg?react'

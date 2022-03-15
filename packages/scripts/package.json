@@ -1,6 +1,6 @@
 {
   "name": "@renzp/scripts",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "基于Webpack5的打包脚本",
   "keywords": [
     "webpack",
@@ -54,6 +54,7 @@
     "@renzp/css-scoped-loader": "^0.0.3",
     "@renzp/jsx-scoped-loader": "^0.0.4",
     "@soda/friendly-errors-webpack-plugin": "^1.8.1",
+    "@svgr/webpack": "^6.2.1",
     "@swc/core": "^1.2.139",
     "address": "^1.1.2",
     "autoprefixer": "^10.4.2",
