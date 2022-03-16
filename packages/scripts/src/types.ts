@@ -60,7 +60,6 @@ export interface Options {
   typescript?: boolean
   /** 原子化框架 */
   atomCss: AtomCss
-  tailwindcss?: boolean
   /** 是否使用css module */
   cssModule?: boolean | CssModuleOptions
   // eslint-disable-next-line no-unused-vars

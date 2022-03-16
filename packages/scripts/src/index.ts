@@ -6,11 +6,20 @@ import server from './server'
 import build from './build'
 import { loadEnv, loadConfigFile } from './utils'
 import { buildDll } from './configs/common/plugins/dll-plugin'
+import showHelp from './help'
 
 const run = async () => {
   try {
-    console.log(`\n${lightBlue(inverse(` 🎉 🅲 🅸 🆃 🅲 🏆 Scripts v${pkg.version} \n`))}`)
     const argv = minimist(process.argv.slice(2))
+    if (argv.version || argv.V) {
+      console.log(`V${pkg.version}`)
+      return true
+    }
+    if (argv.help || argv.h) {
+      showHelp()
+      return true
+    }
+    console.log(`\n${lightBlue(inverse(` 🎉 🅲 🅸 🆃 🅲 🏆 Scripts v${pkg.version} \n`))}`)
     const [runCommand] = argv._
     const commandMethod = {
       start: server,

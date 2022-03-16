@@ -7,7 +7,30 @@
 ```ts
 import type { Options as HtmlOptions } from 'html-webpack-plugin'
 
-export interface Options {
+interface CssModuleOptions {
+  mode: 'local' | 'global' | 'pure' | 'icss'
+  auto: boolean | RegExp
+  exportGlobals: boolean
+  localIdentName: string
+  namedExport: boolean
+  exportLocalsConvention: 'asIs' | 'camelCase' | 'camelCaseOnly' | 'dashes' | 'dashesOnly'
+}
+
+interface AnyObject {
+  [key: string]: unknown
+}
+
+interface BuildInfoWebpackPluginOptions {
+  showName?: boolean
+  showVersion?: boolean
+  nameBlockColor?: string
+  showTime?: boolean
+  timeBlockColor?: string
+  showGit?: boolean
+  gitBlockColor?: string
+}
+
+interface Options {
   /** 打包入口配置 */
   entry: string | Array<string> | AnyObject
   /** 打包输出配置 */
@@ -18,9 +41,6 @@ export interface Options {
   html?: HtmlOptions
   /** 是否使用typescript */
   typescript?: boolean
-  /** 原子化框架 */
-  atomCss: AtomCss
-  tailwindcss?: boolean
   /** 是否使用css module */
   cssModule?: boolean | CssModuleOptions
   // eslint-disable-next-line no-unused-vars
@@ -28,12 +48,14 @@ export interface Options {
   /** 是否在控制台打印打包信息，详情见https://www.npmjs.com/package/@renzp/build-info-webpack-plugin */
   webpackBuildInfo?: boolean | BuildInfoWebpackPluginOptions
   /** Js/Ts文件打包配置 */
-  jtsLoader: JtsLoader
+  jtsLoader?: JtsLoader
   /** less配置 */
-  less: boolean | AnyObject
+  less?: boolean | AnyObject
   /** sass配置 */
-  sass: boolean | AnyObject
+  sass?: boolean | AnyObject
   // 配置构建DLL的依赖
-  dll: string | Array<string>
+  dll?: string | Array<string>
+  // 是否使用css scoped
+  cssScoped?: boolean
 }
 ```
