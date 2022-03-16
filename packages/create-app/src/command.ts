@@ -20,6 +20,8 @@ const getCommandValues = (): CommandValues => {
   const isStylelintFlagUsed = typeof argv.stylelint === 'boolean'
   // 是否使用Css Module
   const isCssModuleFlagUsed = typeof argv.cssModule === 'boolean'
+  // 是否使用Css Scoped
+  const isCssScopedFlagUsed = typeof argv.cssScoped === 'boolean'
   // 是否使用Less
   const isLessFlagUsed = typeof argv.less === 'boolean'
   // 是否使用Sass
@@ -44,6 +46,7 @@ const getCommandValues = (): CommandValues => {
     isEslintFlagUsed,
     isStylelintFlagUsed,
     isCssModuleFlagUsed,
+    isCssScopedFlagUsed,
     isLessFlagUsed,
     isSassFlagUsed,
     jtsLoader,

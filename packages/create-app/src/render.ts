@@ -209,7 +209,15 @@ export const renderTemplate = (src: string, dest: string, typescript?: boolean) 
  * @param {PromptsResult} result
  */
 export const renderCitcConfig = (result: PromptsResult) => {
-  const { typescript = false, cssModule = false, jtsLoader, cssPreprocessor } = result
+  const { typescript = false, cssModule, cssScoped, jtsLoader, cssPreprocessor } = result
+  let cssModuleConfig = ''
+  if (cssModule) {
+    cssModuleConfig = '  cssModule: true,\n'
+  }
+  const cssScopedConfig = ''
+  if (cssScoped) {
+    cssModuleConfig = '  cssScoped: true,\n'
+  }
   let jtsConfig = ''
   if (jtsLoader && jtsLoader !== 'babel') {
     jtsConfig = `  jtsLoader: {\n    loader: '${jtsLoader}',\n  },\n`
@@ -225,7 +233,8 @@ export const renderCitcConfig = (result: PromptsResult) => {
     `/** @type {import('@renzp/scripts').Options} */\n` +
       'module.exports = {\n' +
       `  typescript: ${typescript},\n` +
-      `  cssModule: ${cssModule},\n` +
+      cssModuleConfig +
+      cssScopedConfig +
       cssPreprocessorConfig +
       jtsConfig +
       '}\n'

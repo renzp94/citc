@@ -9,6 +9,7 @@ export interface CommandValues {
   isEslintFlagUsed?: boolean
   isStylelintFlagUsed?: boolean
   isCssModuleFlagUsed?: boolean
+  isCssScopedFlagUsed?: boolean
   isLessFlagUsed?: boolean
   isSassFlagUsed?: boolean
   jtsLoader?: JtsLoaderName
@@ -28,6 +29,7 @@ export interface PromptsResult {
   eslint?: boolean
   stylelint?: boolean
   cssModule?: boolean
+  cssScoped?: boolean
   cssPreprocessor?: CssPreprocessor
   jtsLoader?: JtsLoaderName
   commitlint?: boolean
