@@ -1,6 +1,6 @@
 {
   "name": "@renzp/create-app",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "用于创建 React 项目的脚手架",
   "keywords": [
     "cli",

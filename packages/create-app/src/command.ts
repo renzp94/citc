@@ -29,7 +29,7 @@ const getCommandValues = (): CommandValues => {
   const jtsLoader = argv.jtsLoader
   // css原子化框架
   const atomCssFrameworks = ['windicss', 'tailwindcss']
-  if (argv.css && !atomCssFrameworks.includes(argv.css)) {
+  if (argv.atomCss && !atomCssFrameworks.includes(argv.atomCss)) {
     console.log(red(`🚨 css取值只能为${atomCssFrameworks.join('/')}，当前值为${argv.css}`))
     process.exit(-1)
   }
