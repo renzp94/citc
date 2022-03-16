@@ -3,7 +3,7 @@ export default () => {
   console.log('Options: ')
   console.log('  -V, --version\t\t显示当前版本号')
   console.log('  -h, --help\t\t显示当前使用说明\n')
-  console.log('命令: ')
+  console.log('Config file: ')
   console.log('  create <app-name> [options]')
   console.log('    Options: ')
   console.log('      --ts\t\t是否使用typescript')

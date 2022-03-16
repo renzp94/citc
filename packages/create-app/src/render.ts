@@ -214,9 +214,9 @@ export const renderCitcConfig = (result: PromptsResult) => {
   if (cssModule) {
     cssModuleConfig = '  cssModule: true,\n'
   }
-  const cssScopedConfig = ''
+  let cssScopedConfig = ''
   if (cssScoped) {
-    cssModuleConfig = '  cssScoped: true,\n'
+    cssScopedConfig = '  cssScoped: true,\n'
   }
   let jtsConfig = ''
   if (jtsLoader && jtsLoader !== 'babel') {
