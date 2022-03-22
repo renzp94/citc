@@ -72,7 +72,7 @@ export interface Options {
   less?: boolean | AnyObject
   /** sass配置 */
   sass?: boolean | AnyObject
-  // 配置构建DLL的依赖
+  // 配置构建DLL的依赖(使用pnpm会检测版本自动构建，其他包管理工具请再更新包后使用--force-dll强制构建)
   dll?: string | Array<string>
   // 是否使用css scoped
   cssScoped?: boolean

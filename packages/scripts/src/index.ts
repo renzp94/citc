@@ -37,6 +37,8 @@ const run = async () => {
     process.env.BUILD_TIME_ANALYZER = argv['build-time-analyzer'] ? 'open' : 'close'
     // 使用DLL生成的依赖包
     process.env.DLL = argv['dll'] ?? ''
+    // 强制重新构建DLL
+    process.env.DLL_BUILD = argv['force-dll'] ? 'open' : 'close'
 
     // 加载.env.*
     loadEnv(process.env.NODE_ENV)

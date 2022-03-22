@@ -20,9 +20,9 @@ export const dllDirExist = () => fileExists(dllPath)
  */
 const getDllPackageNameVersion = (path: string) => {
   const space = '/node_modules/'
-  const packageName = path.split(space).pop().split('/')[0]
-  const packagePath = pathResolve(process.cwd(), `.${space}${packageName}/package.json`)
-  const { name, version } = JSON.parse(fs.readFileSync(packagePath, 'utf-8'))
+  const pathList = path.split(space)
+  const name = pathList.pop().split('/')[0]
+  const version = pathList.pop().split('@').pop()
   return version ? { name, version } : undefined
 }
 /**
@@ -51,8 +51,8 @@ export const checkDllVersion = (vendor: Array<string>) => {
     const { content } = JSON.parse(fs.readFileSync(dllManifestPath, 'utf-8'))
     // 已经构建dll的依赖
     const dllPackages = Object.keys(content).map(getDllPackageNameVersion)
-
     // 在dll中存在但版本和当前项目的版本不一致
+    // warning：仅使用pnpm下载的依赖才可以自动检测版本
     const rebuildPackage = buildPackages.find(
       (pkg) =>
         !!dllPackages.find((dll) => pkg.name === dll.name && !pkg.version.includes(dll.version))
@@ -92,8 +92,13 @@ export const checkDllVersion = (vendor: Array<string>) => {
  * @returns 返回true为构建成功，否则为构建失败
  */
 export const buildDll = (dll: Array<string>) => {
-  if (checkDllVersion(dll)) {
+  if (checkDllVersion(dll) && process.env.DLL_BUILD === 'close') {
     return Promise.resolve(false)
+  }
+  if (dllDirExist()) {
+    fs.unlinkSync(`${dllPath}/dll.js`)
+    fs.unlinkSync(`${dllPath}/manifest.json`)
+    fs.unlinkSync(`${dllPath}/dll.js.LICENSE.txt`)
   }
   console.log(gray(`⌛ 构建${dll}依赖包的Dll...`))
   const dllConfig = {
